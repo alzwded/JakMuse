@@ -24,7 +24,15 @@ struct context {
 };
 
 size_t maxChannelLen = 0;
-std::vector<unsigned short> channels[5];
+struct pwm {
+    unsigned short freq;
+    unsigned short fill;
+//    pwm() : freq(0), fill(128) {}
+//    pwm(unsigned short f, unsigned short fi)
+//        : freq(f), fill(fi)
+//    {}
+};
+std::vector<pwm> channels[5];
 
 signed translate_note(char name)
 {
@@ -78,20 +86,6 @@ void siginth(int num)
 void mixin(Uint8* dst, Uint8* src, int length, float scale)
 {
     SDL_MixAudio(dst, src, length, SDL_MIX_MAXVOLUME);
-    //for(int i = 0; i < length; ++i) {
-    //    float a = dst[i] / 127.f;
-    //    float b = src[i] / 127.f;
-    //    float z;
-    //    if(a < 0.5 && b < 0.5) {
-    //        z = a + b - a*b/-1.f;
-    //    } else if(a > 0.5 && b > 0.5) {
-    //        z = (a + b) - a*b;
-    //    } else {
-    //        z = a + b;
-    //    }
-    //    z = 127.f * (z);
-    //    dst[i] = (Uint8)LIMIT(z);
-    //}
 }
 
 void audio_callback(void* data, Uint8* stream, int length)
@@ -101,7 +95,7 @@ void audio_callback(void* data, Uint8* stream, int length)
 #define I() (ctx->i)
 #define K(I) (ctx->k[I])
 #define CHANNELS() (channels)
-#define CONDITION(N) (CHANNELS()[N].size() > I() && CHANNELS()[N][I()])
+#define CONDITION(N) (CHANNELS()[N].size() > I() && CHANNELS()[N][I()].freq)
     float factor = 32.f;
 
     memset(stream, 0, length);
@@ -111,10 +105,10 @@ void audio_callback(void* data, Uint8* stream, int length)
     Uint8* buffer = (Uint8*)malloc(length);
     float scale = 1.0f;
     if CONDITION(0) {
-        totl = spec.freq / (CHANNELS()[0][I()] / 2);
+        totl = spec.freq / (CHANNELS()[0][I()].freq / 2);
         for(size_t j = 0; j < length; ++j) {
             // channel 0, square
-            if(K(0) < totl/2) {
+            if(K(0) < (float)CHANNELS()[0][I()].fill/256.f * totl) {
                 buffer[j] = factor;
             } else {
                 buffer[j] = 0;
@@ -125,10 +119,10 @@ void audio_callback(void* data, Uint8* stream, int length)
         mixin(stream, buffer, length, scale);
     }
     if CONDITION(1) {
-        totl = spec.freq / (CHANNELS()[1][I()] / 2);
+        totl = spec.freq / (CHANNELS()[1][I()].freq / 2);
         for(size_t j = 0; j < length; ++j) {
             // channel 1, square
-            if(K(1) < totl/2) {
+            if(K(1) < (float)CHANNELS()[1][I()].fill/256.f * totl) {
                 buffer[j] = factor;
             } else {
                 buffer[j] = 0;
@@ -139,10 +133,10 @@ void audio_callback(void* data, Uint8* stream, int length)
         mixin(stream, buffer, length, scale);
     }
     if CONDITION(2) {
-        totl = spec.freq / (CHANNELS()[2][I()] / 2);
+        totl = spec.freq / (CHANNELS()[2][I()].freq / 2);
         for(size_t j = 0; j < length; ++j) {
             // channel 1, square
-            if(K(2) < totl/2) {
+            if(K(2) < (float)CHANNELS()[2][I()].fill/256.f * totl) {
                 buffer[j] = factor;
             } else {
                 buffer[j] = 0;
@@ -153,10 +147,10 @@ void audio_callback(void* data, Uint8* stream, int length)
         mixin(stream, buffer, length, scale);
     }
     if CONDITION(3) {
-        totl = spec.freq / (CHANNELS()[3][I()] / 2);
+        totl = spec.freq / (CHANNELS()[3][I()].freq / 2);
         for(size_t j = 0; j < length; ++j) {
             // channel 1, square
-            if(K(3) < totl/2) {
+            if(K(3) < (float)CHANNELS()[3][I()].fill/256.f*totl) {
                 buffer[j] = factor;
             } else {
                 buffer[j] = 0;
@@ -167,10 +161,10 @@ void audio_callback(void* data, Uint8* stream, int length)
         mixin(stream, buffer, length, scale);
     }
     if CONDITION(4) {
-        totl = spec.freq / (CHANNELS()[4][I()] / 2);
+        totl = spec.freq / (CHANNELS()[4][I()].freq / 2);
         for(size_t j = 0; j < length; ++j) {
             // channel 1, square
-            if(K(4) < totl/2) {
+            if(K(4) < (float)CHANNELS()[4][I()].fill/256.f*totl) {
                 buffer[j] = factor;
             } else {
                 buffer[j] = 0;
@@ -180,56 +174,6 @@ void audio_callback(void* data, Uint8* stream, int length)
 
         mixin(stream, buffer, length, scale);
     }
-    //// channel 2, triangle
-    //if CONDITION(2) {
-    //    factor /= 2.f;
-    //    totl = spec.freq / (CHANNELS()[2][I()] / 2);
-    //    for(size_t j = 0; j < length; ++j) {
-    //        // first quarter-period, increasing linear function [0..MAX]
-    //        float t4 = totl/4.f;
-    //        if(K(2) < totl/4.f) {
-    //            buffer[j] = (Uint8)LIMIT(factor * ((float)K(2) / t4));
-    //        // second and third quarters, decreasing linear function [MAX..-MAX]
-    //        } else if(K(2) < 3.f*totl/4) {
-    //            // 1..-1
-    //            float k = (signed)K(2) - t4;
-    //            buffer[j] = (Uint8)LIMIT(factor * (
-    //                        (1.f - k/t4)));
-    //        // fourth quarter, increasing linear function [-MAX..0]
-    //        } else {
-    //            float k = (signed)K(2) - 3*t4;
-    //            buffer[j] = (Uint8)LIMIT(factor * (
-    //                        -1.f + k/t4));
-    //        }
-    //        printf("%d\n", (signed char)buffer[j]);
-    //        K(2) = (K(2) + 1) % totl;
-    //    }
-    //    factor *= 2.f;
-
-    //    mixin(stream, buffer, length, scale);
-    //}
-    //// channel 3, sine
-    //if CONDITION(3) {
-    //    totl = spec.freq / (CHANNELS()[3][I()] / 2);
-    //    for(size_t j = 0; j < length; ++j) {
-    //        stream[j] = (Uint8)LIMIT(factor * 
-    //                sin((double)K(3) *  M_PI / totl));
-    //        K(3) = (K(3) + 1) % totl;
-    //    }
-
-    //    mixin(stream, buffer, length, scale);
-    //}
-    //// channel 4, sine
-    //if CONDITION(4) {
-    //    totl = spec.freq / (CHANNELS()[4][I()] / 2);
-    //    for(size_t j = 0; j < length; ++j) {
-    //        stream[j] = (Uint8)LIMIT(factor * 
-    //                sin((double)K(4) *  M_PI / totl));
-    //        K(4) = (K(4) + 1) % totl;
-    //    }
-
-    //    mixin(stream, buffer, length, scale);
-    //}
 }
 
 void play_music()
@@ -275,6 +219,9 @@ int main(int argc, char* argv[])
         std::cin >> channel;
         if(!std::cin.good()) break;
         assert(channel < 5);
+        // get fill factor
+        unsigned fill(128);
+        std::cin >> fill;
         // get scale factor
         unsigned scale(1);
         std::cin >> scale;
@@ -319,8 +266,11 @@ int main(int argc, char* argv[])
                 frequency = get_offset(note, offset, accidental);
             }
 
-            for(size_t i = 0; i < length * scale; ++i,
-                channels[channel].push_back(frequency));
+            for(size_t i = 0; i < length * scale; ++i) {
+                //pwm el(frequency, fill);
+                pwm el = { frequency, fill };
+                channels[channel].push_back(el);
+            }   
 
             maxChannelLen = std::max(maxChannelLen, channels[channel].size());
         } while(1);
@@ -328,11 +278,10 @@ int main(int argc, char* argv[])
 
     for(size_t i = 0; i < 5; ++i) {
         printf("channel %ld:\n", i);
-        for(std::vector<unsigned short>::iterator j = channels[i].begin();
-                j != channels[i].end(); ++j) {
-            printf("%5d", *j);
-            if((j - channels[i].begin()) % 16 == 15 
-                    && channels[i].end() - j != 1)
+        for(size_t j = 0; j < channels[i].size(); ++j) {
+            printf("%5d", channels[i][j].freq);
+            if(j % 16 == 15 
+                    &&  j != channels[i].size() - 1)
             {
                 printf("\n");
             }
