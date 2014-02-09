@@ -1,5 +1,6 @@
 #include "jakmuse_common.h"
 
+#include <cstdlib>
 #include <cstring>
 #include <cstdio>
 #include <cctype>
@@ -19,16 +20,17 @@ static signed translate_note(char name)
     case 'G': return 7;
     case 'A': return 9;
     case 'B': return 11;
+    default: abort();
     }
 }
 
-static unsigned short get_offset(char name, signed offset, char accidental)
+static unsigned short get_offset(char name, signed scale, char accidental)
 {
-    signed Co = 4;
-    signed C = 9;
+    signed Ascale = 4;
+    signed A = 9;
     signed note = translate_note(name);
 
-    signed step = (offset - Co) * 12 + note - C;
+    signed step = (scale - Ascale) * 12 + note - A;
 
     switch(accidental) {
     case '#':

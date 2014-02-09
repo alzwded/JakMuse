@@ -13,14 +13,14 @@ input: | samples ;
 
 samples: sample | samples sample ;
 
-sample: CHANNEL INT<fill> INT<multiplier> notes ;
+sample: CHANNEL INT<fill> INT<multiplier> notes ";" ;
 
 notes: note | notes note;
 
-note: "\d+[A-G][#b]?\d+" /* <length><note_name><accidental><note_scale> */
-    | "\d+-" /* pause: <length>- */
-    ;
+note: NOTE | PAUSE ; 
 
+NOTE: "\d+[A-G][#b]?\d+" /* <length><note_name><accidental><note_scale> */
+PAUSE: "\d+-" /* <length>- */ 
 CHANNEL: "0" | "1" | "2" | "3" | "4" ;
 INT: "[0-9]*" ;
 ```
