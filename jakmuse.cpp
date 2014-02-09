@@ -27,10 +27,6 @@ size_t maxChannelLen = 0;
 struct pwm {
     unsigned short freq;
     unsigned short fill;
-//    pwm() : freq(0), fill(128) {}
-//    pwm(unsigned short f, unsigned short fi)
-//        : freq(f), fill(fi)
-//    {}
 };
 std::vector<pwm> channels[5];
 
@@ -267,7 +263,6 @@ int main(int argc, char* argv[])
             }
 
             for(size_t i = 0; i < length * scale; ++i) {
-                //pwm el(frequency, fill);
                 pwm el = { frequency, fill };
                 channels[channel].push_back(el);
             }   
