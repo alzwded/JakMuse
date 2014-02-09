@@ -7,11 +7,7 @@
 #include <cassert>
 
 #include <iostream>
-#include <vector>
 #include <string>
-
-extern size_t maxChannelLen;
-extern std::vector<pwm> channels[5];
 
 static signed translate_note(char name)
 {
@@ -111,10 +107,10 @@ void parse()
 
             for(size_t i = 0; i < length * scale; ++i) {
                 pwm el = { frequency, fill };
-                channels[channel].push_back(el);
+                g_channels[channel].push_back(el);
             }   
 
-            maxChannelLen = std::max(maxChannelLen, channels[channel].size());
+            g_maxChannelLen = std::max(g_maxChannelLen, g_channels[channel].size());
         } while(1);
     }
 }

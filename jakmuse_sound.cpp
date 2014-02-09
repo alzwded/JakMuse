@@ -5,8 +5,6 @@
 #include <cmath>
 #include <cassert>
 
-#include <vector>
-
 #include <SDL/SDL.h>
 #include <SDL/SDL_audio.h>
 #include <SDL/SDL_mixer.h>
@@ -16,15 +14,14 @@
 // we don't want our function overflowing
 #define LIMIT(f) (signed char)(((f > 127.0f) ? 127.0f : ((f < -127.f) ? -127.f : f)))
 
+namespace{
 struct context {
     size_t i, k[5];
     SDL_AudioSpec* spec;
 };
+} // namespace
 
-extern size_t maxChannelLen;
-extern std::vector<pwm> channels[5];
-
-void siginth(int num)
+static void siginth(int num)
 {
     printf("Exiting\n");
     SDL_CloseAudio();
@@ -32,18 +29,18 @@ void siginth(int num)
     exit(0);
 }
 
-void mixin(Uint8* dst, Uint8* src, int length, float scale)
+static void mixin(Uint8* dst, Uint8* src, int length, float scale)
 {
     SDL_MixAudio(dst, src, length, SDL_MIX_MAXVOLUME);
 }
 
-void audio_callback(void* data, Uint8* stream, int length)
+static void audio_callback(void* data, Uint8* stream, int length)
 {
     context* ctx = (context*)(data);
     SDL_AudioSpec spec = *((SDL_AudioSpec*)ctx->spec);
 #define I() (ctx->i)
 #define K(I) (ctx->k[I])
-#define CHANNELS() (channels)
+#define CHANNELS() (g_channels)
 #define CONDITION(N) (CHANNELS()[N].size() > I() && CHANNELS()[N][I()].freq)
     float factor = 32.f;
 
@@ -103,7 +100,7 @@ void play_music()
         // prevent the callback from firing mid-modification
         SDL_LockAudio();
         // shift to the next note
-        ctx.i = (ctx.i + 1) % maxChannelLen;
+        ctx.i = (ctx.i + 1) % g_maxChannelLen;
         // resume callback
         SDL_UnlockAudio();
     }
