@@ -66,9 +66,25 @@ static void audio_callback(void* data, Uint8* stream, int length)
     }\
 }while(0)
 
-    for(size_t i = 0; i < 5; ++i) {
+    for(size_t i = 0; i < 3; ++i) {
         FILLCHANNEL(i);
     }
+
+#define TRIACHANNEL(idx) do{\
+    if CONDITION(idx) { \
+        totl = spec.freq / (CHANNELS()[idx][I()].freq / 2); \
+        for(size_t j = 0; j < length; ++j) { \
+            buffer[j] = (Uint8)LIMIT( (float)abs((float)(K(idx) % totl) - totl/2.f) / (float)(totl/2) * 2.f * factor - factor); \
+            K(idx) = (K(idx) + 1) % totl; \
+        } \
+        mixin(stream, buffer, length, scale); \
+    } \
+}while(0)
+
+    for(size_t i = 3; i < 5; ++i) {
+        TRIACHANNEL(i);
+    }
+
 }
 
 void play_music()
