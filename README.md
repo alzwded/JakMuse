@@ -48,3 +48,14 @@ TODO
 Figure out how one can do real-time signal composition so that one may compose a square wave, a triangle wave and a sine wave of different frequencies without obtaining white noise.
 
 THEN, change channel 2 to triangle and channels 3 and 4 to sine.
+
+Test files
+==========
+
+*Disclaimer*: I have used the word _test_ badly in the following table.
+
+| name                          | description                           |
+|-------------------------------|---------------------------------------|
+| `test`                        | this unceremoniously named files tests all 5 channels at once |
+| `testSolo`                    | tests the two triangle waves acting as either triangle waves or sawteeth |
+| `testSolo2`                   | tests a square and a triangle (in triangle or sawtooth mode) together |

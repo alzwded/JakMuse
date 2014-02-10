@@ -1,6 +1,6 @@
 CPP = g++
 CFLAGS = -c -g
-HEAD = jakmuse_common.h
+HEAD = jakmuse_common.h jakmuse_sound.hpp
 OBJS = jakmuse.o jakmuse_parser.o jakmuse_sound.o
 EXENAME = jakmuse
 

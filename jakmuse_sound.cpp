@@ -1,4 +1,5 @@
 #include "jakmuse_common.h"
+#include "jakmuse_sound.hpp"
 
 #include <cstring>
 #include <cstdio>
@@ -37,77 +38,18 @@ static void audio_callback(void* data, Uint8* stream, int length)
 {
     context* ctx = (context*)(data);
     SDL_AudioSpec spec = *((SDL_AudioSpec*)ctx->spec);
-#define I() (ctx->i)
-#define K(I) (ctx->k[I])
-#define CHANNELS() (g_channels)
-#define CONDITION(N) (CHANNELS()[N].size() > I() && CHANNELS()[N][I()].freq)
-    float factor = 32.f;
-
+    int totl;
+    float factor = 32.f; // CAREFUL changing this
     memset(stream, 0, length);
 
-    int totl;// = spec.freq / (stuff[I()]/2);
-
     Uint8* buffer = (Uint8*)malloc(length);
-    float scale = 1.0f;
-
-    // non-fill factor dependent sawtooth
-    //buffer[j] = (Uint8)LIMIT( \
-    //        (float)(K(idx) % totl) \
-    //        / (float)totl \
-    //        * 2.f * factor - factor \
-    //        );
-
-#define FILL(idx) (CHANNELS()[idx][I()].fill)
-#define FACTOR(idx) ( (float)FILL(idx) / 255.f )
-#define SAWTRICHANNEL(idx) do{\
-    if CONDITION(idx) {\
-        totl = spec.freq / (CHANNELS()[idx][I()].freq / 2);\
-        int t1 = (int)(FACTOR(idx) * (float)totl);\
-        int t2 = (int)((1.f - FACTOR(idx)) * (float)totl);\
-        for(size_t j = 0; j < length; ++j) {\
-            if(K(idx) < t1) {\
-                buffer[j] = (Uint8)LIMIT( K(idx) / (float)t1 * 2.f * factor - factor);\
-            } else {\
-                buffer[j] = (Uint8)LIMIT( (t2 - (K(idx) - t1)) / (float)t2 * 2.f * factor - factor);\
-            }\
-            K(idx) = (K(idx) + 1) % totl;\
-        }\
-        mixin(stream, buffer, length, scale);\
-    }\
-}while(0)
-
-#define FILLCHANNEL(idx) do{\
-    if CONDITION(idx) {\
-        totl = spec.freq / (CHANNELS()[idx][I()].freq / 2);\
-        for(size_t j = 0; j < length; ++j) {\
-            if(K(idx) < (float)CHANNELS()[idx][I()].fill/256.f * totl) {\
-                buffer[j] = factor;\
-            } else {\
-                buffer[j] = 0;\
-            }\
-            K(idx) = (K(idx) + 1) % totl;\
-        }\
-        mixin(stream, buffer, length, scale);\
-    }\
-}while(0)
+    float scale = 1.0f; // not used
 
     for(size_t i = 0; i < 3; ++i) {
         FILLCHANNEL(i);
     }
 
-#define TRIACHANNEL(idx) do{\
-    if CONDITION(idx) { \
-        totl = spec.freq / (CHANNELS()[idx][I()].freq / 2); \
-        for(size_t j = 0; j < length; ++j) { \
-            buffer[j] = (Uint8)LIMIT( (float)abs((float)(K(idx) % totl) - totl/2.f) / (float)(totl/2) * 2.f * factor - factor); \
-            K(idx) = (K(idx) + 1) % totl; \
-        } \
-        mixin(stream, buffer, length, scale); \
-    } \
-}while(0)
-
     for(size_t i = 3; i < 5; ++i) {
-        //TRIACHANNEL(i);
         SAWTRICHANNEL(i);
     }
 
