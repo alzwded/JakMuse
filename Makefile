@@ -5,7 +5,7 @@ OBJS = jakmuse.o jakmuse_parser.o jakmuse_sound.o
 EXENAME = jakmuse
 
 $(EXENAME): $(HEAD) $(OBJS)
-	g++ -o $(EXENAME) $(OBJS) -lm -lSDL
+	g++ -o $(EXENAME) $(OBJS) -lm -lSDL -lrt
 
 %.o: %.cpp
 	g++ -o $@ $(CFLAGS) $<

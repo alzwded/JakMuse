@@ -45,7 +45,7 @@ The square waves are loop'd into your soundcard so that you may hear them.
 TODO
 ====
 
-Use higher resolution timer because SDL's insists it's at 10ms. Basically import the timer from the JakVM project.
+~~Use higher resolution timer because SDL's insists it's at 10ms. Basically import the timer from the JakVM project.~~ DONE
 
 Figure out how one can do real-time signal composition so that one may compose a square wave, a triangle wave and a sine wave of different frequencies without obtaining white noise.
 

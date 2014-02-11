@@ -12,6 +12,16 @@
 
 #include <signal.h>
 
+#define FRAME_LEN  8500000l
+#define INSTR_PER_FRAME 125000l
+// why does clock_nanosleep work as intended but nanosleep yields different
+//    sleep amounts on different computers?
+#define SLEEP(FIN, INI) do{\
+    ts.tv_sec = 0; \
+    ts.tv_nsec = FRAME_LEN - (FIN.tv_nsec - INI.tv_nsec); \
+    clock_nanosleep(CLOCK_MONOTONIC, 0, &ts, NULL); \
+}while(0)
+
 namespace{
 struct context {
     size_t i, k[5];
@@ -76,8 +86,13 @@ void play_music()
     SDL_OpenAudio(&as, &spec);
     SDL_PauseAudio(0);
 
+    struct timespec t1, t2, ts;
+    clock_gettime(CLOCK_MONOTONIC, &t1);
     while(1) {
-        SDL_Delay(8); // arbitrary delay => note length
+        //SDL_Delay(8); // arbitrary delay => note length
+        clock_gettime(CLOCK_MONOTONIC, &t2);
+        SLEEP(t2, t1);
+        clock_gettime(CLOCK_MONOTONIC, &t1);
         // prevent the callback from firing mid-modification
         SDL_LockAudio();
         // shift to the next note
