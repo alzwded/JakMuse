@@ -24,7 +24,7 @@ static signed translate_note(char name)
     }
 }
 
-static unsigned short get_offset(char name, signed scale, char accidental)
+static unsigned short get_frequency(char name, signed scale, char accidental)
 {
     signed Ascale = 4;
     signed A = 9;
@@ -104,7 +104,7 @@ void parse()
                 } while(1);
                 assert(i >= ns);
 
-                frequency = get_offset(note, offset, accidental);
+                frequency = get_frequency(note, offset, accidental);
             }
 
             for(size_t i = 0; i < length * scale; ++i) {
