@@ -19,7 +19,13 @@ static std::string token("");
 
 #define TOKEN(a) do{ \
     std::string STR; \
-    std::cin >> STR; \
+    do { \
+        std::cin >> STR; \
+        if(STR[0] == '#') { \
+            while(std::cin.good() && std::cin.get() != '\n'); \
+            while((char)std::cin.peek() == '\n') std::cin.get(); \
+        } \
+    } while(STR[0] == '#'); \
     std::stringstream S1; \
     S1 << STR; \
     S1 >> a; \
