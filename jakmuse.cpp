@@ -4,10 +4,10 @@
 #include <cassert>
 
 size_t g_maxChannelLen = 0;
-pwm_channel_t g_channels[5];
+channels_t g_channels;
 
 #define PRINT(WHAT, VAR) printf(#WHAT "\n"); \
-for(size_t i = 0; i < 5; ++i) {\
+for(size_t i = 0; i < JAKMUSE_NUMCHANNELS; ++i) {\
     printf("channel %ld:\n", i); \
     for(size_t j = 0; j < g_channels[i].size(); ++j) { \
         printf("%5d", g_channels[i][j].VAR); \

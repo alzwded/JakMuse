@@ -55,4 +55,28 @@
     } \
 }while(0)
 
+#define NOISECHANNEL(idx) do{\
+    static bool noiseInit = 0; \
+    static buffer[40960]; \
+    static noiseIdx = 0; \
+    if(!noiseInit) { \
+        SDL_AudioSpec spec; \
+        Uint8* buf; \
+        Uint32 len; \
+        if(NULL == SDL_LoadWAV("noise.wav", &spec, &buf, &len)) abort(); \
+        memcpy(buffer, buf, 40960); \
+        SDL_FreeWAV(buf); \
+    } \
+    if CONDITION(idx) { \
+        totl = spec.freq / (CHANNELS()[idx][I()].freq / 2); \
+        size_t mid = (size_t)LIMIT(FACTOR(idx) * (float)totl); \
+        for(size_t j = 0; j < length; ++j) { \
+            if(j < mid) buffer[j] = noise[noiseIdx++]; \
+            else buffer[j] = 0; \
+            noiseIdx %= 40960; \
+        } \
+        mixin(stream, buffer, length, scale); \
+    } \
+}while(0)
+
 #endif

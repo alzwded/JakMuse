@@ -90,7 +90,7 @@ void parse()
         unsigned channel(255);
         TOKEN(channel);
         if(!std::cin.good()) break;
-        ENSURE(channel < 5);
+        ENSURE(channel < JAKMUSE_NUMCHANNELS);
         // get fill factor
         unsigned fill(128);
         TOKEN(fill);

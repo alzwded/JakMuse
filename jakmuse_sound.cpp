@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cmath>
 #include <cassert>
+#include <ctime>
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_audio.h>
@@ -49,7 +50,6 @@ static void audio_callback(void* data, Uint8* stream, int length)
     for(size_t i = 3; i < 5; ++i) {
         SAWTRICHANNEL(i);
     }
-
 }
 
 void play_music()
@@ -77,7 +77,7 @@ void play_music()
     SDL_PauseAudio(0);
 
     while(1) {
-        SDL_Delay(17); // arbitrary delay => note length
+        SDL_Delay(4); // arbitrary delay => note length
         // prevent the callback from firing mid-modification
         SDL_LockAudio();
         // shift to the next note

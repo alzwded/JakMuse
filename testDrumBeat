@@ -1,0 +1,20 @@
+# simple boom-tzee drum beat
+1 128 20
+    1C6 1G5 1E5 1C5
+    1G4 1B4 1D5 1G5 ;
+
+# channel 0, 32 frames
+0 24 5
+    8-
+    8-
+    1D2 1A1 6-
+    8-
+    ;
+
+# channel 3, 32 frames
+3 128 5
+    1A2 1G2 1E2 1C2 4- #q1
+    1A2 1G2 1E2 1C2 4- #q2
+    1C2 1D3 1E3 5- #q3
+    1A2 1G2 1E2 1C2 4- #q4
+    ;
