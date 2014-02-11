@@ -52,7 +52,7 @@ THEN, change channel 2 to triangle and channels 3 and 4 to sine.
 Test files
 ==========
 
-*Disclaimer*: I have used the word _test_ badly in the following table.
+**Disclaimer**: I have used the word _test_ badly in the following table.
 
 | name                          | description                           |
 |-------------------------------|---------------------------------------|
