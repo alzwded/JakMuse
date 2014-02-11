@@ -9,6 +9,38 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
+
+static int toknum = 0;
+static std::string token("");
+
+#define ENSURE(a) do{ \
+    if(!(a)) cancel(#a); \
+}while(0)
+
+#define TOKEN(a) do{ \
+    std::string STR; \
+    std::cin >> STR; \
+    std::stringstream S1; \
+    S1 << STR; \
+    S1 >> a; \
+    std::stringstream S; \
+    ++toknum; \
+    token.assign(STR); \
+}while(0)
+
+static void cancel(const char* assertion)
+{
+    fprintf(stderr, "Syntax error near token %d \"%s\"\n", toknum, token.c_str());
+    fprintf(stderr, "Failed assertion '%s'\n", assertion);
+    return abort();
+}
+
+static bool isnote(char c)
+{
+    static char notes[] = "CDEFGAB";
+    return strchr(notes, c) != NULL;
+}
 
 static signed translate_note(char name)
 {
@@ -20,7 +52,7 @@ static signed translate_note(char name)
     case 'G': return 7;
     case 'A': return 9;
     case 'B': return 11;
-    default: abort();
+    default: ENSURE(isnote(name));
     }
 }
 
@@ -46,31 +78,25 @@ static unsigned short get_frequency(char name, signed scale, char accidental)
     return (unsigned short)(440.0f * std::pow(2.0f, (float)step / 12.0f));
 }
 
-static bool isnote(char c)
-{
-    static char notes[] = "CDEFGAB";
-    return strchr(notes, c) != NULL;
-}
-
 void parse()
 {
     while(!std::cin.eof()) {
         // get channel
         unsigned channel(255);
-        std::cin >> channel;
+        TOKEN(channel);
         if(!std::cin.good()) break;
-        assert(channel < 5);
+        ENSURE(channel < 5);
         // get fill factor
         unsigned fill(128);
-        std::cin >> fill;
+        TOKEN(fill);
         // get scale factor
         unsigned scale(1);
-        std::cin >> scale;
-        assert(scale);
+        TOKEN(scale);
+        ENSURE(scale > 0);
         // start reading notes
         std::string s;
         do {
-            std::cin >> s;
+            TOKEN(s);
             if(s.empty() || s.compare(";") == 0) break;
 
             size_t i = 0;
@@ -82,19 +108,19 @@ void parse()
                 length *= 10;
                 length += s[i++] - '0';
             } while(1);
-            assert(length);
-            assert(i < ns);
+            ENSURE(length > 0);
+            ENSURE(i < ns);
 
             char note = s[i++];
             unsigned short frequency(0);
 
             if(isnote(note)) {
-                assert(i < ns);
+                ENSURE(i < ns);
                 char accidental = '\0';
                 if(s[i] == '#' || s[i] == 'b') {
                     accidental = s[i++];
                 }
-                assert(i < ns);
+                ENSURE(i < ns);
 
                 signed offset = 0;
                 do {
@@ -102,7 +128,7 @@ void parse()
                     offset *= 10;
                     offset += s[i++] - '0';
                 } while(1);
-                assert(i >= ns);
+                ENSURE(i >= ns);
 
                 frequency = get_frequency(note, offset, accidental);
             }
@@ -114,5 +140,6 @@ void parse()
 
             g_maxChannelLen = std::max(g_maxChannelLen, g_channels[channel].size());
         } while(1);
+        ENSURE(std::cin.good());
     }
 }
