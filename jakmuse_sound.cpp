@@ -11,9 +11,6 @@
 
 #include <signal.h>
 
-// we don't want our function overflowing
-#define LIMIT(f) (signed char)(((f > 127.0f) ? 127.0f : ((f < -127.f) ? -127.f : f)))
-
 namespace{
 struct context {
     size_t i, k[5];

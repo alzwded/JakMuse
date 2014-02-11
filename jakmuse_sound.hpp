@@ -1,6 +1,10 @@
 #ifndef JAKMUSE_SOUND_HPP
 #define JAKMUSE_SOUND_HPP
 
+// we don't want our function overflowing
+#define LIMIT(f) (signed char)(((f > 127.0f) ? 127.0f : ((f < -127.f) ? -127.f : f)))
+
+
 #define I() (ctx->i)
 #define K(I) (ctx->k[I])
 #define CHANNELS() (g_channels)
