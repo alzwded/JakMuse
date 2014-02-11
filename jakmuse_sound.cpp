@@ -77,7 +77,7 @@ void play_music()
     SDL_PauseAudio(0);
 
     while(1) {
-        SDL_Delay(4); // arbitrary delay => note length
+        SDL_Delay(8); // arbitrary delay => note length
         // prevent the callback from firing mid-modification
         SDL_LockAudio();
         // shift to the next note
