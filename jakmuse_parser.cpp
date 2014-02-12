@@ -22,10 +22,10 @@ static std::string token("");
     do { \
         std::cin >> STR; \
         if(STR[0] == '#') { \
-            while(std::cin.good() && std::cin.get() != '\n'); \
-            while((char)std::cin.peek() == '\n') std::cin.get(); \
+            while(!std::cin.eof() && std::cin.get() != '\n'); \
+            while(!std::cin.eof() && std::cin.peek() == '\n') std::cin.get(); \
         } \
-    } while(STR[0] == '#'); \
+    } while(!std::cin.eof() && STR[0] == '#'); \
     std::stringstream S1; \
     S1 << STR; \
     S1 >> a; \
@@ -89,7 +89,7 @@ void parse()
         // get channel
         unsigned channel(255);
         TOKEN(channel);
-        if(!std::cin.good()) break;
+        if(!std::cin.good() || std::cin.eof()) break;
         ENSURE(channel < JAKMUSE_NUMCHANNELS);
         // get fill factor
         unsigned fill(128);
