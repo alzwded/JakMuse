@@ -45,6 +45,8 @@ You can listen to them by running
 
 or something like that.
 
+You can exit via `CTRL-C` (a.k.a. SIGINT a.k.a. interrupt signal).
+
 Output
 ======
 
