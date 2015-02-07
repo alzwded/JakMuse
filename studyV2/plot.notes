@@ -1,0 +1,8 @@
+# do this before running plotNoise
+# because stupid octave+gs requires the window actually be the size
+# of the print and stupid gnome's window manager doesn't allow windows
+# bigger than the screen
+xrandr --output LVDS1 --panning 2000x2000
+octave
+plotNoise
+xrandr --output LVDS1 --panning 1024x600

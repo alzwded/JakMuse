@@ -1,0 +1,25 @@
+figure(1)
+set(1, 'Units', 'inches')
+set(1, 'Position', [0, 0, 18, 18])
+set(1, 'PaperSize', [18, 18])
+set(1, 'PaperPositionMode', 'manual')
+set(1, 'PaperUnits', 'inches')
+set(1, 'PaperPosition', [0, 0, 18, 18])
+
+A = csvread('data.256');
+subplot(2, 1, 1)
+plot(1:256, A(1,:))
+title('0xB1')
+subplot(2, 1, 2)
+plot(1:15, A(2,1:15))
+title('0xB7')
+print(1, 'noise.256.png', '-dpng', '-r100', '-color', '-S1800,1800')
+
+A = csvread('data.64k');
+subplot(2, 1, 1)
+plot(1:40:65536, A(1,1:40:65536))
+title('0xA801')
+subplot(2, 1, 2)
+plot(1:127, A(2,1:127))
+title('0x8255')
+print(1, 'noise.64k.png', '-dpng', '-r100', '-color', '-S1800,1800')

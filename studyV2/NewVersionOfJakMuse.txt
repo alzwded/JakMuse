@@ -1,0 +1,26 @@
+New version of JakMuse
+======================
+
+* remove sleep() calls
+* use 11kHz sampling rate
+* the scale factor is the amount of notes/s, i.e. SF=1 => 1A4 == 1 A440 per second; SF=64 => 32A4 32C5 == one A440 and one C above per second
+* 5 channels: 2 square, 2 sawtooth, 1 noise (e.g. 2 guitars, flute, bass, drum noise); may bump to 7 to add 2 sine waves
+* use SDL_mixer for propper mixing
+* the fill factor is treated as a phase delay on the sine waves
+* output realtime as well as to wav (easy enough)
+
+the way the new algorithm works:
+1. parse data
+2. generate wav channels and store them in memory (should easily be able to store up to 1GB / std::vector apparently)
+3. use a 4096 byte buffer for SDL audio
+4. on callback, mix 4096 samples and flush them in the output buffer
+   * buffering is done in advanced; i.e.:
+```
+while(haveData)
+    ;
+quitAudio();
+
+callback cb {
+    process4k(wav);
+}
+```
