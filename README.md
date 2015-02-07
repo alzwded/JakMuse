@@ -36,6 +36,22 @@ The same channel can apear in multiple samples; for each subsequent appearance, 
 
 Comments are ignored.
 
+But that will change
+--------------------
+
+For v2.0 the sample format will be changed to:
+
+```yacc
+sample: CHANNEL INT<fill> INT<divisor> INT<volume> notes ";" ;
+```
+
+The `divisor` specifies by what amount to divide a second. E.g. if the divisor is `64` and your notes are `32C4 32E4`, a C4 and an E4 of equal length will be played over the span of a second (give or take; the wav output will be closer to a second than realtime playback).
+
+The `volume` option specifies the amplitude of the signal. If you're using only one channel, 255 will be a good option. If you're using 7 you may consider using 32. (around `2^(8-log(Nchannels))`)
+
+Examples
+--------
+
 You can see examples/samples in the `./samples/` subdirectory.
 
 You can listen to them by running
@@ -66,24 +82,30 @@ Right now, SDL is used for actual audio output.
 
 For timing, a hacked-up implementation of a of a timer using clock_nanosleepand repeated calls to clock_gettime is used as a pseudo real-time interrupt. This means that while a song sounds consistent on _a_ computer, different computers tend to lag more or less based on their internal clock resolution (sound round to 10ms, some have a better resolution, etc). (fox example, my netbook lags like 5-10% behind my desktop, but it doesn't stutter or jitter or anything) What this means is that until I figure out a way to tap into a real real-time clock that's actually realtime, don't try synchronizing two computers to play a masterwork composition together.
 
-TODO
-====
+Roadmap
+=======
 
-~~Use higher resolution timer because SDL's insists it's at 10ms. Basically import the timer from the JakVM project.~~ DONE
+Preliminary:
 
-Figure out how one can do real-time signal composition so that one may compose a square wave, a triangle wave and a sine wave of different frequencies without obtaining white noise.
+* [x] investigate better mixing technique (preliminary)
+* [x] investigate noise generators á là gameboy (preliminary)
+* [x] investigate better realtime playback strategy (preliminary)
 
-~~THEN, change channel 2 to triangle and channels 3 and 4 to sine.~~ 3 square, two tria/sawtooth
+TODO:
 
-Pink noise generator. One that doesn't take 10ms to compute.
-
-One probable solution would be to take a frequency domain representation of white noise (or some other noise) and then filter it based on desired input, then IFFT it back to the time domain and mix it in with the other signals. Initial estimates say this process might take around 1 ms to perform for one channel, so we're well below the 8ms mark.
-
-Another solution would be to actually implement a noise generator, but meh.
-
-Support doublesharp and doubleflat (quarter steps). Options:
-* actually support stuff like `4A##4 4A#b4`
-* use `$` and `v` to substitute for 0.25 steps above and 0.25 steps below or 0.75 or whatever
+* [ ] rewrite according to _studyV2_ (v2.0)
+  + [ ] get rid of monotonic clock and be realtime
+  + [ ] use new divisor for sample tempo
+  + [ ] implement noise generator
+* [ ] add volume control to samples (alongside fill/phase and divisor) (v2.1)
+* [ ] add two more phase-shifted sine channels (v2.2)
+* [ ] output wav file (v2.3)
+* [ ] support doublesharp and doubleflat (v2.3)
+* [ ] support bends/glides (v2.4)
+* [ ] output lillypad document instead of channel dump (v2.5)
+* [ ] build interactive library (e.g. to be used in games) (v3.0)
+  + [ ] continuous _music_ channels
+  + [ ] one-off jingle/SFX channels as overrides
 
 Test files
 ==========
