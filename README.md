@@ -97,12 +97,13 @@ TODO:
   + [ ] get rid of monotonic clock and be realtime
   + [ ] use new divisor for sample tempo
   + [ ] implement noise generator
-* [ ] add volume control to samples (alongside fill/phase and divisor) (v2.1)
+* [ ] add simple volume control to samples (alongside fill/phase and divisor) (v2.1)
 * [ ] add two more phase-shifted sine channels (v2.2)
 * [ ] output wav file (v2.3)
 * [ ] support doublesharp and doubleflat (v2.3)
 * [ ] support bends/glides (v2.4)
 * [ ] output lillypad document instead of channel dump (v2.5)
+* [ ] advanced ADSR volume (v2.3)
 * [ ] build interactive library (e.g. to be used in games) (v3.0)
   + [ ] continuous _music_ channels
   + [ ] one-off jingle/SFX channels as overrides
