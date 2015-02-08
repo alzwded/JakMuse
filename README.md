@@ -107,6 +107,8 @@ TODO:
 * [ ] output lillypad document instead of channel dump (v2.5)
 * [x] advanced ~~ADSR~~ ADS volume (v2.0)
 * [ ] build interactive library (e.g. to be used in games) (v3.0)
+  + [ ] separate parsing and compilation
+  + [ ] multi-threaded compilation of channels
   + [ ] continuous _music_ channels
   + [ ] one-off jingle/SFX channels as overrides
 
