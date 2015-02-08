@@ -107,7 +107,7 @@ void parse()
             size_t i = 0;
             size_t const ns = s.size();
 
-            int length = 0;
+            unsigned length = 0;
             do {
                 if(i >= ns || !isdigit(s[i])) break;
                 length *= 10;
@@ -138,8 +138,18 @@ void parse()
                 frequency = get_frequency(note, offset, accidental);
             }
 
-            for(size_t i = 0; i < length * scale; ++i) {
-                pwm el = { frequency, fill };
+            unsigned numSamples =
+                JAKMUSE_SAMPLES_PER_SECOND / scale * length;
+
+            printf("%u ns for this note;\n", numSamples);
+
+            for(size_t i = 0; i < numSamples; ++i) {
+                short sample(0);
+                sample = g_generators[channel](
+                            frequency,
+                            JAKMUSE_SAMPLES_PER_SECOND / frequency,
+                            fill);
+                pwm_t el = { sample, 255 * 45 / 100 };
                 g_channels[channel].push_back(el);
             }   
 

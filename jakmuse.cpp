@@ -5,6 +5,7 @@
 
 size_t g_maxChannelLen = 0;
 channels_t g_channels;
+generators_t g_generators;
 
 #define PRINT(WHAT, VAR) printf(#WHAT "\n"); \
 for(size_t i = 0; i < JAKMUSE_NUMCHANNELS; ++i) {\
@@ -18,11 +19,14 @@ for(size_t i = 0; i < JAKMUSE_NUMCHANNELS; ++i) {\
 
 int main(int argc, char* argv[])
 {
+    extern void init_generators();
+    init_generators();
+
     extern void parse();
     parse();
 
-    PRINT(fills, fill);
-    PRINT(freqs, freq);
+    extern void mix();
+    mix();
 
     extern void play_music();
     play_music();
