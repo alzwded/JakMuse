@@ -50,7 +50,7 @@ static void audio_callback(void* data, Uint8* stream, int length)
         memcpy(stream, g_wav.data() + g_it, realLength * sizeof(short));
     } else {
         memcpy(stream, g_wav.data() + g_it, (g_wav.size() - g_it) * sizeof(short));
-        memcpy(stream, g_wav.data(), (realLength - (g_wav.size() - g_it)) * sizeof(short));
+        memcpy(stream + (g_wav.size() - g_it) * sizeof(short), g_wav.data(), (realLength - (g_wav.size() - g_it)) * sizeof(short));
     }
     g_it = (g_it + realLength) % g_wav.size();
 }
@@ -82,9 +82,7 @@ void play_music()
     SDL_PauseAudio(0);
 
     while(1) {
-        SDL_Event event;
-        while(SDL_PollEvent(&event))
-            ;
+        SDL_Delay(100);
     }
 }
 

@@ -102,6 +102,12 @@ void parse()
         unsigned volume(128);
         TOKEN(volume);
         ENSURE(volume < 256);
+        // get ADS
+        unsigned attack(0), decay(0), sustain(128);
+        TOKEN(attack);
+        TOKEN(decay);
+        TOKEN(sustain);
+        ENSURE(sustain < 256);
         // start reading notes
         std::string s;
         do {
@@ -147,15 +153,29 @@ void parse()
 
             printf("%u ns for this note;\n", numSamples);
 
-            for(size_t i = 0; i < numSamples; ++i) {
+            unsigned ADScounter = 0;
+
+            if(frequency > 0) for(size_t i = 0; i < numSamples; ++i) {
                 short sample(0);
                 sample = g_generators[channel](
                             frequency,
                             JAKMUSE_SAMPLES_PER_SECOND / frequency,
                             fill);
-                pwm_t el = { sample, volume };
+                unsigned realVolume;
+                if(ADScounter < attack) {
+                    realVolume = (float)ADScounter/attack * volume;
+                } else if(ADScounter < attack + decay) {
+                    realVolume = (1.f - (float)(ADScounter - attack)/decay) * volume;
+                } else {
+                    realVolume = (float)sustain/256.f * volume;
+                }
+                pwm_t el = { sample, realVolume };
                 g_channels[channel].push_back(el);
-            }   
+                ADScounter++;
+            } else for(size_t i = 0; i < numSamples; ++i) {
+                pwm_t el = { 0, 0 };
+                g_channels[channel].push_back(el);
+            }
 
             g_maxChannelLen = std::max(g_maxChannelLen, g_channels[channel].size());
         } while(1);
