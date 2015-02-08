@@ -96,13 +96,13 @@
 # noise! (continued)
 4
 # fill/padding factor
-3
+4
 # 3 beats/second
 3
 # master volume
 128
 # ADS: 400 beats, 600 beats, 0
-1000 0
+0 1000 0
 # notes
 1C7 1E7 1- 1C7 2- 1C7 1E7 2- 1E7 1C7
 # end
