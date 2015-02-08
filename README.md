@@ -1,7 +1,7 @@
 JakMuse
 =======
 
-Synthesizes 5 sound signals based on a textual representation of musical notes.
+Synthesizes 7 sound signals based on a textual representation of musical notes.
 
 The format is described below.
 
@@ -100,7 +100,7 @@ TODO:
   + [x] use new divisor for sample tempo
   + [x] implement noise generator
 * [x] add simple volume control to samples (alongside fill/phase and divisor) (v2.0)
-* [ ] add two more phase-shifted sine channels (v2.1)
+* [x] add two more phase-shifted sine channels (v2.0)
 * [ ] output wav file (v2.2)
 * [ ] support doublesharp and doubleflat (v2.2)
 * [ ] support bends/glides (v2.3)

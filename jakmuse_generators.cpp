@@ -32,7 +32,7 @@ static short _sine(unsigned short freq, unsigned Ns, unsigned fill)
 {
     static unsigned k = 0;
 
-    unsigned lk = k % Ns;
+    unsigned lk = k++ % Ns;
     // use cos in order to keep triangle and sine in phase
     // for fill = 128
     float val_1 = cosf(1.f / Ns * 2.f * 3.14159f * lk
@@ -73,8 +73,6 @@ void init_generators()
     g_generators.push_back(_triangle);
     g_generators.push_back(_triangle);
     g_generators.push_back(_noise);
-#if 0
     g_generators.push_back(_sine);
     g_generators.push_back(_sine);
-#endif
 }

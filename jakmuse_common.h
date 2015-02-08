@@ -4,7 +4,7 @@
 #include <vector>
 #include <cstddef>
 
-#define JAKMUSE_NUMCHANNELS 5
+#define JAKMUSE_NUMCHANNELS 7
 
 #define JAKMUSE_SAMPLES_PER_SECOND 11025
 //#define JAKMUSE_SAMPLES_PER_SECOND 44100
