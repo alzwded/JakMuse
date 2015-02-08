@@ -101,6 +101,7 @@ TODO:
   + [x] implement noise generator
 * [x] add simple volume control to samples (alongside fill/phase and divisor) (v2.0)
 * [x] add two more phase-shifted sine channels (v2.0)
+* [ ] low pass filter for generators
 * [ ] output wav file (v2.2)
 * [ ] support doublesharp and doubleflat (v2.2)
 * [ ] support bends/glides (v2.3)
