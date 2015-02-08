@@ -82,7 +82,9 @@ void play_music()
     SDL_PauseAudio(0);
 
     while(1) {
-        SDL_Delay(100);
+        SDL_Event event;
+        while(SDL_PollEvent(&event))
+            ;
     }
 }
 
@@ -90,14 +92,15 @@ void mix()
 {
     for(size_t i = 0; i < g_maxChannelLen; ++i) {
         float sum(0.f);
+        float magni = 0x7FFF;
         for(size_t j = 0; j < JAKMUSE_NUMCHANNELS; ++j) {
             if(g_channels[j].size() <= i) continue;
             printf("%zd: %d @%d\n", j, g_channels[j][i].sample, g_channels[j][i].volume);
-            sum += (g_channels[j][i].sample / 127.f)
+            sum += (g_channels[j][i].sample / magni)
                 * (g_channels[j][i].volume / 255.f);
             printf("    sum = %f\n", sum);
         }
-        g_wav.push_back((short)(tanhf(sum) * 128.f));
+        g_wav.push_back((short)(tanhf(sum) * magni));
         printf("    tanh = %d\n", g_wav[i]);
     }
 }

@@ -1,10 +1,12 @@
 #include <cmath>
 #include "jakmuse_common.h"
 
+// TODO generators return float because they go directly into the mixer
+
 static short _square(unsigned short freq, unsigned Ns, unsigned fill)
 {
     static unsigned k = 0;
-    static short values[2] = { 127, -128 };
+    static short values[2] = { 0x7FFF, -0x7FFF };
 
     unsigned lk = k++ % Ns;
     return values[lk < Ns * fill / 256];
@@ -22,7 +24,8 @@ static short _triangle(unsigned short freq, unsigned Ns, unsigned fill)
             : (float)(Ns - lk) / (Ns - Ns * fill / 256) * 2.f - 1.f
             ;
     printf("%u %f|Ns = %u fill = %u freq = %u\n", lk, val_1, Ns, fill, freq);
-    return (short)(127.f * val_1);
+    float magni = 0x7FFF;
+    return (short)(magni * val_1);
 }
 
 static short _sine(unsigned short freq, unsigned Ns, unsigned fill)
@@ -35,7 +38,8 @@ static short _sine(unsigned short freq, unsigned Ns, unsigned fill)
     float val_1 = cosf(1.f / Ns * 2.f * 3.14159f * lk
             + 2.f * 3.14159f * fill / 256.f);
 
-    return (short)(127.f * val_1);
+    float magni = 0x7FFF;
+    return (short)(magni * val_1);
 }
 
 static short _noise(unsigned short freq, unsigned Ns, unsigned fill)

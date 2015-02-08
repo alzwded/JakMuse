@@ -98,6 +98,10 @@ void parse()
         unsigned scale(1);
         TOKEN(scale);
         ENSURE(scale > 0);
+        // get volume
+        unsigned volume(128);
+        TOKEN(volume);
+        ENSURE(volume < 256);
         // start reading notes
         std::string s;
         do {
@@ -149,7 +153,7 @@ void parse()
                             frequency,
                             JAKMUSE_SAMPLES_PER_SECOND / frequency,
                             fill);
-                pwm_t el = { sample, 255 * 45 / 100 };
+                pwm_t el = { sample, volume };
                 g_channels[channel].push_back(el);
             }   
 
