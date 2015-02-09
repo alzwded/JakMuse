@@ -8,6 +8,8 @@
 80
 # ADS: 400 beats, 200 beats, 100/255 = 40%
 400 200 100
+# filter
+65534
 # notes
 1C4 1E4 1- 1C4 2- 1C4 1E4 2- 1E4 1C4
 1C4 1E4 1- 1C4 2- 1C4 1E4 2- 1E4 1C4
@@ -28,6 +30,8 @@
 200
 # ADS: 0 beats, 600 beats, 128/255 = 50%
 0 600 128
+# filter
+65534
 # notes
 12- 12-
 1C4 1E4 1- 1C4 2- 1C4 1E4 2- 1E4 1C4
@@ -48,6 +52,8 @@
 200
 # ADS: 400 beats, 0 beats, 100%
 400 0 255
+# filter
+65534
 # notes
 12- 12-
 12- 12-
@@ -66,6 +72,8 @@
 230
 # ADS: 400 beats, 600 beats, 0
 200 800 0
+# filter
+65534
 # notes
 1C4 1E4 1- 1C4 2- 1C4 1E4 2- 1E4 1C4
 1C4 1E4 1- 1C4 2- 1C4 1E4 2- 1E4 1C4
@@ -83,6 +91,8 @@
 128
 # ADS: 400 beats, 600 beats, 0
 200 600 0
+# filter
+65534
 # notes
 12- 12-
 12- 12-
@@ -103,6 +113,8 @@
 128
 # ADS: 400 beats, 600 beats, 0
 0 1000 0
+# filter
+65534
 # notes
 1C7 1E7 1- 1C7 2- 1C7 1E7 2- 1E7 1C7
 # end

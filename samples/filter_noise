@@ -1,7 +1,7 @@
 # channel
-0
+4
 # fill
-128
+1
 # notes/sec
 4
 # volume: MADS
@@ -14,9 +14,9 @@
 ;
 
 # channel
-0
+4
 # fill
-128
+1
 # notes/sec
 4
 # volume: MADS
@@ -29,9 +29,9 @@
 ;
 
 # channel
-0
+4
 # fill
-128
+1
 # notes/sec
 4
 # volume: MADS
@@ -44,9 +44,9 @@
 ;
 
 # channel
-0
+4
 # fill
-128
+1
 # notes/sec
 4
 # volume: MADS
@@ -60,9 +60,9 @@
 
 
 # channel
-0
+4
 # fill
-128
+1
 # notes/sec
 4
 # volume: MADS
@@ -75,9 +75,9 @@
 ;
 
 # channel
-0
+4
 # fill
-128
+1
 # notes/sec
 4
 # volume: MADS
@@ -90,9 +90,9 @@
 ;
 
 # channel
-0
+4
 # fill
-128
+1
 # notes/sec
 4
 # volume: MADS
@@ -105,9 +105,9 @@
 ;
 
 # channel
-0
+4
 # fill
-128
+1
 # notes/sec
 4
 # volume: MADS
@@ -120,9 +120,9 @@
 ;
 
 # channel
-0
+4
 # fill
-128
+1
 # notes/sec
 4
 # volume: MADS
@@ -135,9 +135,9 @@
 ;
 
 # channel
-0
+4
 # fill
-128
+1
 # notes/sec
 4
 # volume: MADS
@@ -147,18 +147,4 @@
 # notes
 2C4 1- 2Eb4 2F4 1-
 # end
-;
-
-# continuous drumbeat?
-4 40 4 60 0 2000 0 80
-1C1 1C1 1C1 1C1 1C1 1C1 1C1 1C1
-1C9 1C9 1C9 1C9 1C9 1C9 1C9 1C9
-1C1 1C1 1C1 1C1 1C1 1C1 1C1 1C1
-1C9 1C9 1C9 1C9 1C9 1C9 1C9 1C9
-1C1 1C1 1C1 1C1 1C1 1C1 1C1 1C1
-1C9 1C9 1C9 1C9 1C9 1C9 1C9 1C9
-1C1 1C1 1C1 1C1 1C1 1C1 1C1 1C1
-1C9 1C9 1C9 1C9 1C9 1C9 1C9 1C9
-1C1 1C1 1C1 1C1 1C1 1C1 1C1 1C1
-1C9 1C9 1C9 1C9 1C9 1C9 1C9 1C9
 ;
