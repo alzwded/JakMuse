@@ -101,12 +101,12 @@ TODO:
   + [x] implement noise generator
 * [x] add simple volume control to samples (alongside fill/phase and divisor) (v2.0)
 * [x] add two more phase-shifted sine channels (v2.0)
-* [ ] low pass filter for generators
-* [ ] output wav file (v2.2)
-* [ ] support doublesharp and doubleflat (v2.2)
-* [ ] support bends/glides (v2.3)
-* [ ] output lillypad document instead of channel dump (v2.5)
+* [x] low pass filter for generators
 * [x] advanced ~~ADSR~~ ADS volume (v2.0)
+* [ ] output wav file (v2.0)
+* [ ] support doublesharp and doubleflat (v2.2)
+* [ ] support ~~bends/glides~~ glide parameter (v2.3)
+* [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
 * [ ] build interactive library (e.g. to be used in games) (v3.0)
   + [ ] separate parsing and compilation
   + [ ] multi-threaded compilation of channels
