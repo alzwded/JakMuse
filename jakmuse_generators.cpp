@@ -1,19 +1,28 @@
 #include <cmath>
 #include "jakmuse_common.h"
 
+#define APPLY_RC(X, A, F) do{\
+    static short APPLY_RC_X_1 = 0; \
+    if(F == 0) X = 0; \
+    short nv = A * X + (1 - A) * APPLY_RC_X_1; \
+    APPLY_RC_X_1 = nv; \
+    X = nv; \
+}while(0)
+
 // TODO generators return float because they go directly into the mixer
 
-static short _square(unsigned short freq, unsigned Ns, unsigned fill)
+static short _square(unsigned short freq, unsigned Ns, unsigned fill, float alpha)
 {
     static unsigned k = 0;
     static short values[2] = { 0x7FFF, -0x7FFF };
 
     unsigned lk = k++ % Ns;
-    return values[lk < Ns * fill / 256];
+    short ret = values[lk < Ns * fill / 256];
+    APPLY_RC(ret, alpha, freq);
+    return ret;
 }
 
-#include <cstdio>
-static short _triangle(unsigned short freq, unsigned Ns, unsigned fill)
+static short _triangle(unsigned short freq, unsigned Ns, unsigned fill, float alpha)
 {
     static unsigned k = 0;
 
@@ -23,12 +32,13 @@ static short _triangle(unsigned short freq, unsigned Ns, unsigned fill)
             ? (float)lk * 256 / (Ns * fill) * 2.f - 1.f
             : (float)(Ns - lk) / (Ns - Ns * fill / 256) * 2.f - 1.f
             ;
-    printf("%u %f|Ns = %u fill = %u freq = %u\n", lk, val_1, Ns, fill, freq);
     float magni = 0x7FFF;
-    return (short)(magni * val_1);
+    short ret = (short)(magni * val_1);
+    APPLY_RC(ret, alpha, freq);
+    return ret;
 }
 
-static short _sine(unsigned short freq, unsigned Ns, unsigned fill)
+static short _sine(unsigned short freq, unsigned Ns, unsigned fill, float alpha)
 {
     static unsigned k = 0;
 
@@ -39,10 +49,12 @@ static short _sine(unsigned short freq, unsigned Ns, unsigned fill)
             + 2.f * 3.14159f * fill / 256.f);
 
     float magni = 0x7FFF;
-    return (short)(magni * val_1);
+    short ret = (short)(magni * val_1);
+    APPLY_RC(ret, alpha, freq);
+    return ret;
 }
 
-static short _noise(unsigned short freq, unsigned Ns, unsigned fill)
+static short _noise(unsigned short freq, unsigned Ns, unsigned fill, float alpha)
 {
     typedef struct {
         unsigned short reg, poly;
@@ -62,7 +74,9 @@ static short _noise(unsigned short freq, unsigned Ns, unsigned fill)
         myreg->reg = (myreg->reg >> 1) ^ ((myreg->reg & 0x1) * myreg->poly);
     }
 
-    return (short)myreg->reg;
+    short ret = (short)myreg->reg;
+    APPLY_RC(ret, alpha, freq);
+    return ret;
 }
 
 

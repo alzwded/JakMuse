@@ -1,0 +1,74 @@
+# channel
+0
+# fill
+128
+# notes/sec
+4
+# volume: MADS
+80 300 400 128
+# filter
+800
+# notes
+2C4 1- 2E4 2F#4 1-
+# end
+;
+
+# channel
+0
+# fill
+128
+# notes/sec
+4
+# volume: MADS
+80 300 400 128
+# filter
+10000
+# notes
+2C4 1- 2E4 2F#4 1-
+# end
+;
+
+# channel
+0
+# fill
+128
+# notes/sec
+4
+# volume: MADS
+80 300 400 128
+# filter
+16000
+# notes
+2C4 1- 2E4 2F#4 1-
+# end
+;
+
+# channel
+0
+# fill
+128
+# notes/sec
+4
+# volume: MADS
+80 300 400 128
+# filter
+600
+# notes
+2C4 1- 2E4 2F#4 1-
+# end
+;
+
+# channel
+0
+# fill
+128
+# notes/sec
+4
+# volume: MADS
+80 300 400 128
+# filter
+65534
+# notes
+2C4 1- 2E4 2F#4 1-
+# end
+;

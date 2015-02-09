@@ -108,6 +108,11 @@ void parse()
         TOKEN(decay);
         TOKEN(sustain);
         ENSURE(sustain < 256);
+        // get filter parameter
+        unsigned filter_freq(0);
+        TOKEN(filter_freq);
+        ENSURE(filter_freq < 65535);
+        filter_freq++;
         // start reading notes
         std::string s;
         do {
@@ -155,12 +160,22 @@ void parse()
 
             unsigned ADScounter = 0;
 
-            if(frequency > 0) for(size_t i = 0; i < numSamples; ++i) {
+            float filter_RC = 1.f / (2.f * 3.14159f * filter_freq);
+            static float timestep = 1.f / JAKMUSE_SAMPLES_PER_SECOND;
+            float filter_alpha = timestep / (timestep + filter_RC);
+
+            for(size_t i = 0; i < numSamples; ++i) {
                 short sample(0);
-                sample = g_generators[channel](
-                            frequency,
-                            JAKMUSE_SAMPLES_PER_SECOND / frequency,
-                            fill);
+                if(frequency > 0) {
+                    sample = g_generators[channel](
+                                frequency,
+                                JAKMUSE_SAMPLES_PER_SECOND / frequency,
+                                fill,
+                                filter_alpha);
+                } else {
+                    sample = g_generators[channel](
+                            GENERATOR_RESET_PARAMS(filter_alpha));
+                }
                 unsigned realVolume;
                 if(ADScounter < attack) {
                     realVolume = (float)ADScounter/attack * volume;
@@ -172,9 +187,6 @@ void parse()
                 pwm_t el = { sample, realVolume };
                 g_channels[channel].push_back(el);
                 ADScounter++;
-            } else for(size_t i = 0; i < numSamples; ++i) {
-                pwm_t el = { 0, 0 };
-                g_channels[channel].push_back(el);
             }
 
             g_maxChannelLen = std::max(g_maxChannelLen, g_channels[channel].size());
