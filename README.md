@@ -103,6 +103,7 @@ TODO:
 * [x] add two more phase-shifted sine channels (v2.0)
 * [x] low pass filter for generators
 * [x] advanced ~~ADSR~~ ADS volume (v2.0)
+* [ ] experiment with filtering after ADS envelope
 * [ ] output wav file (v2.0)
 * [ ] support doublesharp and doubleflat (v2.2)
 * [ ] support ~~bends/glides~~ glide parameter (v2.3)

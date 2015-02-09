@@ -93,12 +93,9 @@ void mix()
         float magni = 0x7FFF;
         for(size_t j = 0; j < JAKMUSE_NUMCHANNELS; ++j) {
             if(g_channels[j].size() <= i) continue;
-            printf("%zd: %d @%d\n", j, g_channels[j][i].sample, g_channels[j][i].volume);
             sum += (g_channels[j][i].sample / magni)
                 * (g_channels[j][i].volume / 255.f);
-            printf("    sum = %f\n", sum);
         }
         g_wav.push_back((short)(tanhf(sum) * magni));
-        printf("    tanh = %d\n", g_wav[i]);
     }
 }

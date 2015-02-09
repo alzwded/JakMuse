@@ -156,8 +156,6 @@ void parse()
             unsigned numSamples =
                 JAKMUSE_SAMPLES_PER_SECOND / scale * length;
 
-            printf("%u ns for this note;\n", numSamples);
-
             unsigned ADScounter = 0;
 
             float filter_RC = 1.f / (2.f * 3.14159f * filter_freq);
