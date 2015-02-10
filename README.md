@@ -103,9 +103,11 @@ TODO:
 * [x] add two more phase-shifted sine channels (v2.0)
 * [x] low pass filter for generators
 * [x] advanced ~~ADSR~~ ADS volume (v2.0)
-* [ ] make generators objects because the internal counter leaks across channels
-* [ ] experiment with filtering after ADS envelope
+* [ ] make generators objects because the internal counter leaks across channels (yes, this is a bug caused by static variables in case you were wondering) (v2.0)
+* [ ] experiment with filtering after ADS envelope (tied to the above) (v2.0)
+* [ ] support LFO (v2.0)
 * [ ] output wav file (v2.0)
+* [ ] improve parser to modify some parameters in an optional way (e.g. I set ADSR once for channel 0 but I still want to modify its fill factor without having to re-specify ADSR) because the amount of parameters is becoming unweildly (8 + 5 more on the way) (v2.1)
 * [ ] support doublesharp and doubleflat (v2.2)
 * [ ] support ~~bends/glides~~ glide parameter (v2.3)
 * [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
@@ -114,6 +116,29 @@ TODO:
   + [ ] multi-threaded compilation of channels
   + [ ] continuous _music_ channels
   + [ ] one-off jingle/SFX channels as overrides
+
+Tentative syntax supporting optional parameters:
+```
+# channel
+0
+# begin parameters
+{
+  NPS=3
+  Fill=128
+  MaxVol=128
+  A=300
+  D=400
+  S=200
+  R=100
+  Filter=12000
+  LFODepth=60
+  LFOFreq=20
+  LFOPhase=20 # maybe
+# end parameters
+}
+# notes
+1C4 7D4 ;
+```
 
 Test files
 ==========
