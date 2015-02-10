@@ -90,12 +90,10 @@ void mix()
 {
     for(size_t i = 0; i < g_maxChannelLen; ++i) {
         float sum(0.f);
-        float magni = 0x7FFF;
         for(size_t j = 0; j < JAKMUSE_NUMCHANNELS; ++j) {
             if(g_channels[j].size() <= i) continue;
-            sum += (g_channels[j][i].sample / magni)
-                * (g_channels[j][i].volume / 255.f);
+            sum += g_channels[j][i];
         }
-        g_wav.push_back((short)(tanhf(sum) * magni));
+        g_wav.push_back((short)(tanhf(sum) * 0x7FFF));
     }
 }

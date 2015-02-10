@@ -17,7 +17,14 @@ input: | samples ;
 
 samples: sample | samples sample ;
 
-sample: CHANNEL INT<fill> INT<multiplier> notes ";" ;
+sample: CHANNEL
+        INT<fill> INT<notesPerSecond> 
+        INT<volume>
+        INT<attack_length> INT<decay_length>
+        INT<sustain>
+        INT<lowpass_filter_frequency>
+        notes
+        ";" ;
 
 notes: note | notes note;
 
@@ -41,15 +48,17 @@ Comments are ignored.
 But that will change
 --------------------
 
-For v2.0 the sample format will be changed to:
+~~For v2.0 the sample format will be changed to:~~ no it won't.
 
 ```yacc
 sample: CHANNEL INT<fill> INT<divisor> INT<volume> notes ";" ;
 ```
 
-The `divisor` specifies by what amount to divide a second. E.g. if the divisor is `64` and your notes are `32C4 32E4`, a C4 and an E4 of equal length will be played over the span of a second (give or take; the wav output will be closer to a second than realtime playback).
+~~The `divisor` specifies by what amount to divide a second. E.g. if the divisor is `64` and your notes are `32C4 32E4`, a C4 and an E4 of equal length will be played over the span of a second (give or take; the wav output will be closer to a second than realtime playback).~~
 
-The `volume` option specifies the amplitude of the signal. If you're using only one channel, 255 will be a good option. If you're using 7 you may consider using 32. (around `2^(8-log(Nchannels))`)
+~~The `volume` option specifies the amplitude of the signal. If you're using only one channel, 255 will be a good option. If you're using 7 you may consider using 32. (around `2^(8-log(Nchannels))`)~~
+
+*TODO* develop a nice little media tracking document format. It's a bit described in the Roadmap.
 
 Examples
 --------
@@ -101,11 +110,11 @@ TODO:
   + [x] implement noise generator
 * [x] add simple volume control to samples (alongside fill/phase and divisor) (v2.0)
 * [x] add two more phase-shifted sine channels (v2.0)
-* [x] low pass filter for generators
+* [x] low pass filter for generators (v2.0)
 * [x] advanced ~~ADSR~~ ADS volume (v2.0)
-* [ ] make generators objects because the internal counter leaks across channels (yes, this is a bug caused by static variables in case you were wondering) (v2.0)
-* [ ] experiment with filtering after ADS envelope (tied to the above) (v2.0)
-* [ ] support LFO (v2.0)
+* [x] make generators objects because the internal counter leaks across channels (yes, this is a bug caused by static variables in case you were wondering) (v2.0)
+* [x] experiment with filtering after ADS envelope (tied to the above) (v2.0)
+* [ ] support LFO (v2.0) _(the support is there, just need to actually teach the parser about it)_
 * [ ] output wav file (v2.0)
 * [ ] improve parser to modify some parameters in an optional way (e.g. I set ADSR once for channel 0 but I still want to modify its fill factor without having to re-specify ADSR) because the amount of parameters is becoming unweildly (8 + 5 more on the way) (v2.1)
 * [ ] support doublesharp and doubleflat (v2.2)
@@ -117,23 +126,25 @@ TODO:
   + [ ] continuous _music_ channels
   + [ ] one-off jingle/SFX channels as overrides
 
+JakMuse v2.0 will be released when there are no more TODO items for it.
+
 Tentative syntax supporting optional parameters:
 ```
 # channel
 0
 # begin parameters
 {
-  NPS=3
-  Fill=128
-  MaxVol=128
-  A=300
-  D=400
-  S=200
-  R=100
-  Filter=12000
-  LFODepth=60
-  LFOFreq=20
-  LFOPhase=20 # maybe
+  NPS = 3                 # all of these will have reasonable
+  Fill = 128              # default
+  MaxVol = 128            #
+  A = 300                 # if one is not specified, its last
+  D = 400                 # specified value for this channel
+  S = 200                 # will be kept
+  R = 100
+  Filter = 12000
+  LFODepth = 60
+  LFOFreq = 20
+  LFOPhase = 20 # maybe
 # end parameters
 }
 # notes

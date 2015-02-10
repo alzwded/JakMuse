@@ -10,19 +10,138 @@
 //#define JAKMUSE_SAMPLES_PER_SECOND 44100
 #define JAKMUSE_BUFFER_LEN 4096
 
-typedef struct {
-    short sample;
-    unsigned short volume;
-} pwm_t;
+typedef float pwm_t;
 
 extern size_t g_maxChannelLen;
 typedef std::vector<pwm_t> pwm_channel_t;
 typedef pwm_channel_t channels_t[JAKMUSE_NUMCHANNELS];
 extern channels_t g_channels;
-typedef short (*generator_t)(unsigned short freq, unsigned Ns, unsigned fill, float alpha);
+
+typedef struct {
+    unsigned short reg, poly;
+} noise_reg_t;
+
+typedef struct {
+    struct {
+        unsigned Ns, fill;
+        float alpha;
+    } def;
+    struct {
+        float maxvol;
+        float S;
+        unsigned A, D, R;
+    } volume;
+    struct {
+        unsigned Ns, phase;
+        float depth;
+    } lfo;
+} generator_public_state_t;
+
+typedef float (*generator_fn)(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsigned short fill);
+
+
+typedef struct {
+    struct {
+        unsigned k;
+        noise_reg_t noise_regs[2];
+        unsigned last_Ns;
+        float rc_reg;
+        unsigned adsr_counter;
+    } priv;
+    generator_public_state_t pub;
+} generator_state_t;
+
+extern void init_generators();
+
+typedef class Generator
+{
+    generator_state_t state_;
+    generator_fn fn_;
+
+    Generator(generator_fn fn)
+        : fn_(fn)
+    {
+        static generator_state_t default_ = {
+            // private
+            {
+                // internal counter
+                0,
+                // noise registers
+                { { 0xA001, 0x8255 }, { 0xA001, 0xA801 } },
+                // last/previous note frequency
+                0,
+                // filter's previous value register
+                0.f,
+                // adsr counter
+                0,
+            },
+            // public
+            {
+                // note definition
+                {
+                    // note freq, fill
+                    0, 128,
+                    // filter's alpha parameter
+                    1.1f,
+                },
+                // volume
+                {
+                    // maxvol
+                    0.5f,
+                    // sustain level
+                    1.f,
+                    // attack, decay, release
+                    0, 0, 0,
+                },
+                // lfo
+                {
+                    // freq, phase
+                    0, 0,
+                    // depth
+                    0.f,
+                },
+            },
+        };
+        state_ = default_;
+    }
+
+    friend void init_generators();
+public:
+    Generator() = default;
+    Generator(Generator const&) = default;
+    Generator(Generator &&) = default;
+    Generator& operator=(Generator const&) = default;
+    Generator& operator=(Generator &&) = default;
+
+    void SetNs(unsigned Ns) { state_.pub.def.Ns = Ns; }
+    void SetFill(unsigned fill) { state_.pub.def.fill = fill; }
+    void SetFilterAlpha(float alpha) { state_.pub.def.alpha = alpha; }
+    void SetMaxVol(float vol) { state_.pub.volume.maxvol = vol; }
+    void SetEnvelope(unsigned A, unsigned D, float S, unsigned R)
+    {
+        state_.pub.volume.A = A;
+        state_.pub.volume.D = D;
+        state_.pub.volume.S = S;
+        state_.pub.volume.R = R;
+    }
+    void SetLfo(unsigned Ns, unsigned phase, float depth)
+    {
+        state_.pub.lfo.Ns = Ns;
+        state_.pub.lfo.phase = phase;
+        state_.pub.lfo.depth = depth;
+    }
+
+    void NewNote(unsigned Ns)
+    {
+        state_.priv.last_Ns = state_.pub.def.Ns;
+        state_.pub.def.Ns = Ns;
+        state_.priv.adsr_counter = 0;
+    }
+
+    float operator()();
+} generator_t;
+
 typedef std::vector<generator_t> generators_t;
 extern generators_t g_generators;
-
-#define GENERATOR_RESET_PARAMS(ALPHA) 0, 1, 1, ALPHA
 
 #endif

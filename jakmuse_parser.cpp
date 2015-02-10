@@ -103,7 +103,7 @@ void parse()
         TOKEN(volume);
         ENSURE(volume < 256);
         // get ADS
-        unsigned attack(0), decay(0), sustain(128);
+        unsigned attack(0), decay(0), sustain(128), release(0);
         TOKEN(attack);
         TOKEN(decay);
         TOKEN(sustain);
@@ -162,29 +162,20 @@ void parse()
             static float timestep = 1.f / JAKMUSE_SAMPLES_PER_SECOND;
             float filter_alpha = timestep / (timestep + filter_RC);
 
+            unsigned Ns = (frequency) ? JAKMUSE_SAMPLES_PER_SECOND / frequency : 0;
+
+            Generator& gen = g_generators[channel];
+            gen.NewNote(Ns);
+            gen.SetFill(fill);
+            gen.SetFilterAlpha(filter_alpha);
+            gen.SetMaxVol((float)volume / 255.f);
+            gen.SetEnvelope(attack, decay, (float)sustain / 255.f, release);
+            gen.SetLfo(0, 0, 0.f);
+            //gen.SetGlide(0);
+
             for(size_t i = 0; i < numSamples; ++i) {
-                short sample(0);
-                if(frequency > 0) {
-                    sample = g_generators[channel](
-                                frequency,
-                                JAKMUSE_SAMPLES_PER_SECOND / frequency,
-                                fill,
-                                filter_alpha);
-                } else {
-                    sample = g_generators[channel](
-                            GENERATOR_RESET_PARAMS(filter_alpha));
-                }
-                unsigned realVolume;
-                if(ADScounter < attack) {
-                    realVolume = (float)ADScounter/attack * volume;
-                } else if(ADScounter < attack + decay) {
-                    realVolume = (1.f - (float)(ADScounter - attack)/decay) * volume;
-                } else {
-                    realVolume = (float)sustain/256.f * volume;
-                }
-                pwm_t el = { sample, realVolume };
-                g_channels[channel].push_back(el);
-                ADScounter++;
+                pwm_t sample = g_generators[channel]();
+                g_channels[channel].push_back(sample);
             }
 
             g_maxChannelLen = std::max(g_maxChannelLen, g_channels[channel].size());

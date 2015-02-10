@@ -11,20 +11,19 @@
 
 // TODO generators return float because they go directly into the mixer
 
-static short _square(unsigned short freq, unsigned Ns, unsigned fill, float alpha)
+static float _square(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsigned short fill)
 {
-    static unsigned k = 0;
-    static short values[2] = { 0x7FFF, -0x7FFF };
+    if(Ns == 0) return 0.f;
+
+    static float values[2] = { 1.f, -1.f };
 
     unsigned lk = k++ % Ns;
-    short ret = values[lk < Ns * fill / 256];
-    APPLY_RC(ret, alpha, freq);
-    return ret;
+    return values[lk < Ns * fill / 256];
 }
 
-static short _triangle(unsigned short freq, unsigned Ns, unsigned fill, float alpha)
+static float _triangle(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsigned short fill)
 {
-    static unsigned k = 0;
+    if(Ns == 0) return 0.f;
 
     unsigned lk = k++ % Ns;
 
@@ -32,61 +31,101 @@ static short _triangle(unsigned short freq, unsigned Ns, unsigned fill, float al
             ? (float)lk * 256 / (Ns * fill) * 2.f - 1.f
             : (float)(Ns - lk) / (Ns - Ns * fill / 256) * 2.f - 1.f
             ;
-    float magni = 0x7FFF;
-    short ret = (short)(magni * val_1);
-    APPLY_RC(ret, alpha, freq);
-    return ret;
+    return val_1;
 }
 
-static short _sine(unsigned short freq, unsigned Ns, unsigned fill, float alpha)
+static float _sine(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsigned short fill)
 {
-    static unsigned k = 0;
-
+    if(Ns == 0) return 0.f;
+    
     unsigned lk = k++ % Ns;
     // use cos in order to keep triangle and sine in phase
     // for fill = 128
     float val_1 = cosf(1.f / Ns * 2.f * 3.14159f * lk
             + 2.f * 3.14159f * fill / 256.f);
 
-    float magni = 0x7FFF;
-    short ret = (short)(magni * val_1);
-    APPLY_RC(ret, alpha, freq);
-    return ret;
+    return val_1;
 }
 
-static short _noise(unsigned short freq, unsigned Ns, unsigned fill, float alpha)
+static float _noise(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsigned short fill)
 {
-    typedef struct {
-        unsigned short reg, poly;
-    } _reg_t;
-
-    static _reg_t regs[2] = {
-        { 0xA001, 0x8255 },
-        { 0xA001, 0xA801 },
-    };
-
-    static unsigned k = 0;
-
-    _reg_t* myreg = &regs[freq < 440];
+    if(Ns == 0) return 0.f;
+    
+    noise_reg_t* myreg = &noise_regs[Ns < JAKMUSE_SAMPLES_PER_SECOND / 480];
     unsigned lf = k++ % fill;
 
     if(lf == 0) {
         myreg->reg = (myreg->reg >> 1) ^ ((myreg->reg & 0x1) * myreg->poly);
     }
 
-    short ret = (short)myreg->reg;
-    APPLY_RC(ret, alpha, freq);
-    return ret;
+    return (float)myreg->reg / (float)0x7FFF;
 }
 
 
 void init_generators()
 {
-    g_generators.push_back(_square);
-    g_generators.push_back(_square);
-    g_generators.push_back(_triangle);
-    g_generators.push_back(_triangle);
-    g_generators.push_back(_noise);
-    g_generators.push_back(_sine);
-    g_generators.push_back(_sine);
+    g_generators.push_back(Generator(_square));
+    g_generators.push_back(Generator(_square));
+    g_generators.push_back(Generator(_triangle));
+    g_generators.push_back(Generator(_triangle));
+    g_generators.push_back(Generator(_noise));
+    g_generators.push_back(Generator(_sine));
+    g_generators.push_back(Generator(_sine));
+}
+
+#include <cstdio>
+float Generator::operator()()
+{
+    // compute base sample
+    float base = fn_(state_.priv.k, state_.priv.noise_regs, state_.pub.def.Ns, state_.pub.def.fill);
+    float prev = fn_(state_.priv.k, state_.priv.noise_regs, state_.priv.last_Ns, state_.pub.def.fill);
+
+    // TODO glide... maybe
+
+    // apply volume
+#define ADSR_COUNTER (state_.priv.adsr_counter)
+    if(ADSR_COUNTER < state_.pub.volume.A) {
+        base = (float)ADSR_COUNTER/state_.pub.volume.A
+            * state_.pub.volume.maxvol
+            * base;
+        ADSR_COUNTER++;
+    } else if(ADSR_COUNTER - state_.pub.volume.A < state_.pub.volume.D) {
+        base = (1.f
+                - (float)(ADSR_COUNTER - state_.pub.volume.A)
+                / state_.pub.volume.D)
+            * state_.pub.volume.maxvol
+            * base;
+        ADSR_COUNTER++;
+    } else {
+        base = state_.pub.volume.maxvol * state_.pub.volume.S * base;
+    }
+
+    if(state_.pub.def.Ns == 0
+            && ADSR_COUNTER - state_.pub.volume.A - state_.pub.volume.D
+            < state_.pub.volume.R)
+    {
+        base = (1.f
+                - (float)(ADSR_COUNTER - state_.pub.volume.A - state_.pub.volume.D)
+                / state_.pub.volume.R)
+            * state_.pub.volume.maxvol
+            * prev;
+        ADSR_COUNTER++;
+    }
+#undef ADSR_COUNTER
+
+    // apply lfo
+    float lfo_sample = cosf((float)state_.pub.lfo.Ns * 2.f * 3.14159f
+            + (float)state_.pub.lfo.phase);
+    base = state_.pub.lfo.depth * lfo_sample * base
+        + (1.f - state_.pub.lfo.depth) * base;
+
+    // apply RC filter
+    float note = state_.pub.def.alpha * base +
+        (1.f - state_.pub.def.alpha) * state_.priv.rc_reg;
+    state_.priv.rc_reg = note;
+
+    // increment step
+    state_.priv.k++;
+
+    return note;
 }
