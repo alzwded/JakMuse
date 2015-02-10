@@ -51,7 +51,7 @@ static float _noise(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, uns
 {
     if(Ns == 0) return 0.f;
     
-    noise_reg_t* myreg = &noise_regs[Ns < JAKMUSE_SAMPLES_PER_SECOND / 480];
+    noise_reg_t* myreg = &noise_regs[Ns > JAKMUSE_SAMPLES_PER_SECOND / 440];
     unsigned lf = k++ % fill;
 
     if(lf == 0) {
