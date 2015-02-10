@@ -107,7 +107,6 @@ typedef class Generator
 
     friend void init_generators();
 public:
-    Generator() = default;
     Generator(Generator const&) = default;
     Generator(Generator &&) = default;
     Generator& operator=(Generator const&) = default;
