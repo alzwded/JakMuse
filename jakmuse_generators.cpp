@@ -9,8 +9,6 @@
     X = nv; \
 }while(0)
 
-// TODO generators return float because they go directly into the mixer
-
 static float _square(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsigned short fill)
 {
     if(Ns == 0) return 0.f;
