@@ -116,9 +116,9 @@ TODO:
 * [x] experiment with filtering after ADS envelope (tied to the above) (v2.0)
 * [ ] support LFO (v2.0) _(the support is there, just need to actually teach the parser about it)_
 * [ ] output wav file (v2.0)
-* [ ] improve parser to modify some parameters in an optional way (e.g. I set ADSR once for channel 0 but I still want to modify its fill factor without having to re-specify ADSR) because the amount of parameters is becoming unweildly (8 + 5 more on the way) (v2.1)
-* [ ] support doublesharp and doubleflat (v2.2)
-* [ ] support ~~bends/glides~~ glide parameter (v2.3)
+* [ ] improve parser to modify some parameters in an optional way (e.g. I set ADSR once for channel 0 but I still want to modify its fill factor without having to re-specify ADSR) because the amount of parameters is becoming unweildly (8 + 5 more on the way) (v2.0)
+* [ ] support doublesharp and doubleflat (v2.1)
+* [ ] support ~~bends/glides~~ glide parameter (v2.2)
 * [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
 * [ ] build interactive library (e.g. to be used in games) (v3.0)
   + [ ] separate parsing and compilation
