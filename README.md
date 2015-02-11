@@ -8,7 +8,9 @@ The format is described below.
 Input format
 ============
 
-Input is read from STDIN.
+Input is read from STDIN. This means you can either pipe/redirect the input from a file or write it yourself at the terminal.
+
+On POSIX systems, you can end STDIN on a terminal with ^D (Ctrl+D) on a blank line. On Windows you can end STDIN in cmd the CP/M way with ^Z<CR> (Ctrl-Z Enter) on a blank line.
 
 ```yacc
 input: | sequences ;
