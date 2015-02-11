@@ -1,7 +1,7 @@
 CPP = g++
 CFLAGS = -c -g --std=gnu++11
 HEAD = jakmuse_common.h jakmuse_sound.hpp
-OBJS = jakmuse.o jakmuse_parser.o jakmuse_sound.o jakmuse_generators.o
+OBJS = jakmuse.o jakmuse_parser.o jakmuse_sound.o jakmuse_generators.o jakmuse_wave.o
 EXENAME = jakmuse
 
 $(EXENAME): $(HEAD) $(OBJS)
