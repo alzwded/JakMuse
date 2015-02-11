@@ -10,8 +10,10 @@ LIBS = SDL.lib
 
 OBJS = jakmuse.obj jakmuse_parser.obj jakmuse_sound.obj jakmuse_generators.obj
 
-jakmuse.exe: $(OBJS)
+jakmuse.exe: $(OBJS) SDL.dll
 	$(LD) $(LDOPTS) $(OBJS) $(LIBS)
+
+SDL.dll:
 	copy $(SDLROOT)\lib\$(PLA)\SDL.dll .
 
 {..\}.cpp{}.obj::
