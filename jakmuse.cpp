@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 {
     if(argc > 1 && strcmp(argv[1], "-v") == 0) {
         printf("JakMuse v%s, Copyright Vlad Mesco 2014\n", VERSION);
-        printf("  available under the terms of the Simplified BSD License");
+        printf("  available under the terms of the Simplified BSD License\n");
         exit(255);
     }
 
