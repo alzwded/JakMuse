@@ -20,10 +20,10 @@ static void wav_write_header(FILE* f, unsigned samplPerSec, unsigned numSamples)
         uint32_t data_ckId;
         uint32_t data_cksize;
     } header = {
-        'RIFF',
+        'FFIR', // little endian RIFF
         4 + 24 + (8 + 2 /*B per sample*/ * 1 /*N channels*/ * numSamples + 0),
-        'WAVE',
-        'fmt ',
+        'EVAW', // little endian WAVE
+        ' tmf', // little endian fmt 
         16,
         0x0001,
         1,
@@ -31,7 +31,7 @@ static void wav_write_header(FILE* f, unsigned samplPerSec, unsigned numSamples)
         samplPerSec * 2 * 1,
         2 * 1,
         16,
-        'data',
+        'atad', // little endian data
         2 * 1 * numSamples,
     };
 

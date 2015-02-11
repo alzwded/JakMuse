@@ -21,6 +21,9 @@ jakmuse
 *.log
 log
 
+# output data files
+*.wav
+
 # vendor
 SDL.dll
 SDL-*
