@@ -13,6 +13,10 @@
 *.so.*
 *.dylib
 
+# visual studio stuff
+*.ilk
+*.pdb
+
 # Executables
 *.exe
 *.out
