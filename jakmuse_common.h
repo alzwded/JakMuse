@@ -34,6 +34,7 @@ typedef struct {
     struct {
         unsigned Ns, phase;
         float depth;
+        float freq_modulation_depth;
     } lfo;
 } generator_public_state_t;
 
@@ -98,6 +99,8 @@ typedef class Generator
                     // freq, phase
                     0, 0,
                     // depth
+                    0.f,
+                    // frequency modulation depth,
                     0.f,
                 },
             },

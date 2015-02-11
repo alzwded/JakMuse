@@ -74,9 +74,24 @@ void init_generators()
 #include <cstdio>
 float Generator::operator()()
 {
+    // grab the 'frequency' (wavelength, actually)
+    unsigned Ns = state_.pub.def.Ns;
+    unsigned last_Ns = state_.priv.last_Ns;
+
+    // compute LFO sample
+    float lfo_sample = cosf(state_.priv.k
+            * (float)state_.pub.lfo.Ns * 2.f * 3.14159f
+            + (float)state_.pub.lfo.phase);
+
+    // apply LFO frequency modulation
+    Ns = state_.pub.lfo.freq_modulation_depth * lfo_sample * Ns
+        + (1.f - state_.pub.lfo.freq_modulation_depth) * Ns;
+    last_Ns = state_.pub.lfo.freq_modulation_depth * lfo_sample * last_Ns
+        + (1.f - state_.pub.lfo.freq_modulation_depth) * last_Ns;
+
     // compute base sample
-    float base = fn_(state_.priv.k, state_.priv.noise_regs, state_.pub.def.Ns, state_.pub.def.fill);
-    float prev = fn_(state_.priv.k, state_.priv.noise_regs, state_.priv.last_Ns, state_.pub.def.fill);
+    float base = fn_(state_.priv.k, state_.priv.noise_regs, Ns, state_.pub.def.fill);
+    float prev = fn_(state_.priv.k, state_.priv.noise_regs, last_Ns, state_.pub.def.fill);
 
     // TODO glide... maybe
 
@@ -98,6 +113,7 @@ float Generator::operator()()
         base = state_.pub.volume.maxvol * state_.pub.volume.S * base;
     }
 
+    // don't check the modulated Ns here; Ns == 0 means no note is input
     if(state_.pub.def.Ns == 0
             && ADSR_COUNTER - state_.pub.volume.A - state_.pub.volume.D
             < state_.pub.volume.R)
@@ -111,9 +127,7 @@ float Generator::operator()()
     }
 #undef ADSR_COUNTER
 
-    // apply lfo
-    float lfo_sample = cosf((float)state_.pub.lfo.Ns * 2.f * 3.14159f
-            + (float)state_.pub.lfo.phase);
+    // apply amplitude lfo
     base = state_.pub.lfo.depth * lfo_sample * base
         + (1.f - state_.pub.lfo.depth) * base;
 
