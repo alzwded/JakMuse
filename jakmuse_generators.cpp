@@ -48,6 +48,7 @@ static float _noise(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, uns
     unsigned lf = k++ % fill;
 
     if(lf == 0) {
+        // this is one reason why calls to generate can't be parallelized
         myreg->reg = (myreg->reg >> 1) ^ ((myreg->reg & 0x1) * myreg->poly);
     }
 
@@ -66,7 +67,6 @@ void init_generators()
     g_generators.push_back(Generator(_sine));
 }
 
-#include <cstdio>
 float Generator::operator()()
 {
     // grab the 'frequency' (wavelength, actually)
