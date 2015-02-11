@@ -114,6 +114,10 @@ static void process_params(
 
         gen.SetFilterAlpha(filter_alpha);
     }
+    if((found = params.find("S")) != params.end()) {
+        float sustain = (float)found->second / 255.f;
+        gen.SetEnvelopeS(sustain);
+    }
 
 #define process_params_CONDITION(KEY, VARNAME) \
     if((found = params.find(#KEY)) != params.end()) { \
@@ -124,7 +128,6 @@ static void process_params(
     process_params_CONDITION(MaxVol, MaxVol);
     process_params_CONDITION(A, EnvelopeA);
     process_params_CONDITION(D, EnvelopeD);
-    process_params_CONDITION(S, EnvelopeS);
     process_params_CONDITION(R, EnvelopeR);
     process_params_CONDITION(LFODepth, LfoDepth);
     process_params_CONDITION(LFOFMDepth, LfoFrequencyModulationDepth);

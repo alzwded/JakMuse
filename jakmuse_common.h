@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstddef>
+#include <cstdio> // DEBUGGING
 
 #define JAKMUSE_NUMCHANNELS 7
 
@@ -136,6 +137,9 @@ public:
         state_.priv.last_Ns = state_.pub.def.Ns;
         state_.pub.def.Ns = wavelength;
         state_.priv.adsr_counter = 0;
+        state_.priv.k = 0;
+
+        printf("sustain: %f\n", state_.pub.volume.S);
     }
 
     float operator()();

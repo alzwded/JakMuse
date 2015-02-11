@@ -1,14 +1,6 @@
 #include <cmath>
 #include "jakmuse_common.h"
 
-#define APPLY_RC(X, A, F) do{\
-    static short APPLY_RC_X_1 = 0; \
-    if(F == 0) X = 0; \
-    short nv = A * X + (1 - A) * APPLY_RC_X_1; \
-    APPLY_RC_X_1 = nv; \
-    X = nv; \
-}while(0)
-
 static float _square(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsigned short fill)
 {
     if(Ns == 0) return 0.f;
@@ -115,13 +107,14 @@ float Generator::operator()()
 
     // don't check the modulated Ns here; Ns == 0 means no note is input
     if(state_.pub.def.Ns == 0
-            && ADSR_COUNTER - state_.pub.volume.A - state_.pub.volume.D
+            && ADSR_COUNTER
             < state_.pub.volume.R)
     {
         base = (1.f
-                - (float)(ADSR_COUNTER - state_.pub.volume.A - state_.pub.volume.D)
+                - (float)(ADSR_COUNTER)
                 / state_.pub.volume.R)
             * state_.pub.volume.maxvol
+            * state_.pub.volume.S
             * prev;
         ADSR_COUNTER++;
     }
