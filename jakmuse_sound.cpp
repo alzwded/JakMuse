@@ -93,6 +93,7 @@ void play_music()
 
 void mix()
 {
+    // omp-ing this yields a 10% speed increase; not worth it now
     for(size_t i = 0; i < g_maxChannelLen; ++i) {
         float sum(0.f);
         for(size_t j = 0; j < JAKMUSE_NUMCHANNELS; ++j) {
