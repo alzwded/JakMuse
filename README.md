@@ -117,8 +117,11 @@ Right now, SDL is used for actual audio output.
 
 For timing, a hacked-up implementation of a of a timer using clock_nanosleepand repeated calls to clock_gettime is used as a pseudo real-time interrupt. This means that while a song sounds consistent on _a_ computer, different computers tend to lag more or less based on their internal clock resolution (sound round to 10ms, some have a better resolution, etc). (fox example, my netbook lags like 5-10% behind my desktop, but it doesn't stutter or jitter or anything) What this means is that until I figure out a way to tap into a real real-time clock that's actually realtime, don't try synchronizing two computers to play a masterwork composition together.
 
-Building on windows
-===================
+Building
+========
+
+...on windows
+-------------
 
 Works with Visual Studio 2013.
 
@@ -133,8 +136,8 @@ nmake
 
 You can use other versions of SDL, but you need to update the SDLROOT var/macro for nmake.
 
-Building on linux
-=================
+...on linux
+-----------
 
 Apart from the regular `g++` & `make`, you need `libSDL-devel` (or whatever your distro calls it). Then, just run `make` and it should compiler.
 
@@ -161,9 +164,9 @@ TODO:
 * [x] advanced ~~ADSR~~ ADS volume (v2.0)
 * [x] make generators objects because the internal counter leaks across channels (yes, this is a bug caused by static variables in case you were wondering) (v2.0)
 * [x] experiment with filtering after ADS envelope (tied to the above) (v2.0)
-* [ ] support LFO (v2.0) _(the support is there, just need to actually teach the parser about it)_
-* [ ] output wav file (v2.0)
-* [ ] improve parser to modify some parameters in an optional way (e.g. I set ADSR once for channel 0 but I still want to modify its fill factor without having to re-specify ADSR) because the amount of parameters is becoming unweildly (8 + 5 more on the way) (v2.0)
+* [x] support LFO (v2.0)
+* [x] output wav file (v2.0)
+* [x] improve parser to modify some parameters in an optional way (e.g. I set ADSR once for channel 0 but I still want to modify its fill factor without having to re-specify ADSR) because the amount of parameters is becoming unweildly (8 + 5 more on the way) (v2.0)
 * [ ] support doublesharp and doubleflat (v2.1)
 * [ ] support ~~bends/glides~~ glide parameter (v2.2)
 * [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
@@ -172,10 +175,6 @@ TODO:
   + [ ] multi-threaded compilation of channels
   + [ ] continuous _music_ channels
   + [ ] one-off jingle/SFX channels as overrides
-
-JakMuse v2.0 will be released when there are no more TODO items for it.
-
-Tentative syntax supporting optional parameters:
 
 Test files
 ==========
