@@ -1,7 +1,7 @@
 JakMuse
 =======
 
-Synthesizes 7 sound signals based on a textual representation of musical notes.
+Synthesizes a handful of sound signals based on a textual representation of musical notes.
 
 The format is described below.
 
@@ -11,11 +11,11 @@ Input format
 Input is read from STDIN.
 
 ```yacc
-input: | samples ;
+input: | sequences ;
 
-samples: sample | samples sample ;
+sequences: sequence | sequences sequence ;
 
-sample: CHANNEL
+sequence: CHANNEL
         '{' param_list '}'
         notes
         ";" ;
@@ -111,11 +111,11 @@ You can specify the `-w filename` command line option to jakmuse. The result wil
 Audio
 -----
 
-The square waves are loop'd into your soundcard so that you may hear them.
+The synthesised sound waves are loop'd into your soundcard so that you can hear them.
 
-Right now, SDL is used for actual audio output.
+Right now, SDL is used for actual audio output. The input is rendered up front and the resulting PCM data is streamed is done in realtime.
 
-For timing, a hacked-up implementation of a of a timer using clock_nanosleepand repeated calls to clock_gettime is used as a pseudo real-time interrupt. This means that while a song sounds consistent on _a_ computer, different computers tend to lag more or less based on their internal clock resolution (sound round to 10ms, some have a better resolution, etc). (fox example, my netbook lags like 5-10% behind my desktop, but it doesn't stutter or jitter or anything) What this means is that until I figure out a way to tap into a real real-time clock that's actually realtime, don't try synchronizing two computers to play a masterwork composition together.
+Technically speaking, SDL is not needed to write the wave file, only for playback.
 
 Building
 ========
