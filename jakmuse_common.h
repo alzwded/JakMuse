@@ -117,28 +117,24 @@ public:
     Generator& operator=(Generator &&) = default;
 #endif
 
-    void SetNs(unsigned Ns) { state_.pub.def.Ns = Ns; }
+
+    void SetWaveLength(unsigned Ns) { state_.pub.def.Ns = Ns; }
     void SetFill(unsigned fill) { state_.pub.def.fill = fill; }
     void SetFilterAlpha(float alpha) { state_.pub.def.alpha = alpha; }
     void SetMaxVol(float vol) { state_.pub.volume.maxvol = vol; }
-    void SetEnvelope(unsigned A, unsigned D, float S, unsigned R)
-    {
-        state_.pub.volume.A = A;
-        state_.pub.volume.D = D;
-        state_.pub.volume.S = S;
-        state_.pub.volume.R = R;
-    }
-    void SetLfo(unsigned Ns, unsigned phase, float depth)
-    {
-        state_.pub.lfo.Ns = Ns;
-        state_.pub.lfo.phase = phase;
-        state_.pub.lfo.depth = depth;
-    }
+    void SetEnvelopeA(unsigned A) { state_.pub.volume.A = A; }
+    void SetEnvelopeD(unsigned D) { state_.pub.volume.D = D; }
+    void SetEnvelopeS(float S) { state_.pub.volume.S = S; }
+    void SetEnvelopeR(unsigned R) { state_.pub.volume.R = R; }
+    void SetLfoWaveLength(unsigned Ns) { state_.pub.lfo.Ns = Ns; }
+    void SetLfoPhase(unsigned phase) { state_.pub.lfo.phase = phase; }
+    void SetLfoDepth(float depth) { state_.pub.lfo.depth = depth; }
+    void SetLfoFrequencyModulationDepth(float depth) { state_.pub.lfo.freq_modulation_depth = depth; }
 
-    void NewNote(unsigned Ns)
+    void NewNote(unsigned wavelength)
     {
         state_.priv.last_Ns = state_.pub.def.Ns;
-        state_.pub.def.Ns = Ns;
+        state_.pub.def.Ns = wavelength;
         state_.priv.adsr_counter = 0;
     }
 

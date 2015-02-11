@@ -13,6 +13,8 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <map>
+#include <utility>
 
 static int toknum = 0;
 static std::string token("");
@@ -90,6 +92,7 @@ static unsigned short get_frequency(char name, signed scale, char accidental)
     return (unsigned short)(440.0f * std::pow(2.0f, (float)step / 12.0f));
 }
 
+#if 0
 void parse()
 {
     while(!std::cin.eof()) {
@@ -190,3 +193,131 @@ void parse()
         ENSURE(std::cin.good());
     }
 }
+#else
+static void process_params(
+        std::map<std::string, unsigned>& params,
+        generator_t& gen,
+        unsigned& scale)
+{
+    std::map<std::string, unsigned>::iterator found;
+    // scale and lfo wave length are special...
+    if((found = params.find("NPS")) != params.end()) {
+        scale = found->second;
+    }
+    if((found = params.find("LFOFreq")) != params.end()) {
+        unsigned freq = found->second;
+        unsigned Ns = (freq) ? (JAKMUSE_SAMPLES_PER_SECOND / freq) : 0;
+        gen.SetLfoWaveLength(Ns);
+    }
+    if((found = params.find("Filter")) != params.end()) {
+        float filter_RC = 1.f / (2.f * 3.14159f * found->second);
+        static float timestep = 1.f / JAKMUSE_SAMPLES_PER_SECOND;
+        float filter_alpha = timestep / (timestep + filter_RC);
+
+        gen.SetFilterAlpha(filter_alpha);
+    }
+
+#define process_params_CONDITION(KEY, VARNAME) \
+    if((found = params.find(#KEY)) != params.end()) { \
+        gen.Set##VARNAME(found->second); \
+    }
+
+    process_params_CONDITION(Fill, Fill);
+    process_params_CONDITION(MaxVol, MaxVol);
+    process_params_CONDITION(A, EnvelopeA);
+    process_params_CONDITION(D, EnvelopeD);
+    process_params_CONDITION(S, EnvelopeS);
+    process_params_CONDITION(R, EnvelopeR);
+    process_params_CONDITION(LFODepth, LfoDepth);
+    process_params_CONDITION(LFOFMDepth, LfoFrequencyModulationDepth);
+    process_params_CONDITION(LFOPhase, LfoPhase);
+#undef process_params_CONDITION
+}
+
+void parse()
+{
+    // CHANNEL '{' param_list '}' note_list ';' ;
+    while(!std::cin.eof()) {
+        // get channel
+        unsigned channel(255);
+        TOKEN(channel);
+        if(!std::cin.good() || std::cin.eof()) break;
+        ENSURE(channel < JAKMUSE_NUMCHANNELS);
+
+        // read the '{'
+        std::string scratch;
+        TOKEN(scratch);
+        ENSURE(scratch.compare("{") == 0);
+        std::map<std::string, unsigned> params;
+
+        do {
+            TOKEN(scratch);
+            if(scratch.compare("}") == 0) break;
+            unsigned val;
+            TOKEN(val);
+            ENSURE(token.compare("}") != 0);
+            params.insert(std::make_pair(scratch, val));
+        } while(1);
+
+        // configure the generator
+        Generator& gen = g_generators[channel];
+        unsigned scale(0);
+        process_params(params, gen, scale);
+
+        // start reading notes
+        std::string s;
+        do {
+            TOKEN(s);
+            if(s.empty() || s.compare(";") == 0) break;
+
+            size_t i = 0;
+            size_t const ns = s.size();
+
+            unsigned length = 0;
+            do {
+                if(i >= ns || !isdigit(s[i])) break;
+                length *= 10;
+                length += s[i++] - '0';
+            } while(1);
+            ENSURE(length > 0);
+            ENSURE(i < ns);
+
+            char note = s[i++];
+            unsigned short frequency(0);
+
+            if(isnote(note)) {
+                ENSURE(i < ns);
+                char accidental = '\0';
+                if(s[i] == '#' || s[i] == 'b') {
+                    accidental = s[i++];
+                }
+                ENSURE(i < ns);
+
+                signed offset = 0;
+                do {
+                    if(i >= ns || !isdigit(s[i])) break;
+                    offset *= 10;
+                    offset += s[i++] - '0';
+                } while(1);
+                ENSURE(i >= ns);
+
+                frequency = get_frequency(note, offset, accidental);
+            }
+
+            unsigned numSamples =
+                JAKMUSE_SAMPLES_PER_SECOND / scale * length;
+
+            unsigned Ns = (frequency) ? JAKMUSE_SAMPLES_PER_SECOND / frequency : 0;
+            gen.NewNote(Ns);
+
+            for(size_t i = 0; i < numSamples; ++i) {
+                pwm_t sample = g_generators[channel]();
+                g_channels[channel].push_back(sample);
+            }
+
+            g_maxChannelLen = std::max(g_maxChannelLen, g_channels[channel].size());
+        } while(1);
+        ENSURE(std::cin.good());
+    }
+}
+#endif
