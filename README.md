@@ -18,13 +18,13 @@ input: | samples ;
 samples: sample | samples sample ;
 
 sample: CHANNEL
-        INT<fill> INT<notesPerSecond> 
-        INT<volume>
-        INT<attack_length> INT<decay_length>
-        INT<sustain>
-        INT<lowpass_filter_frequency>
+        '{' param_list '}'
         notes
         ";" ;
+
+param_list: | param_list param ;
+
+param: STRING INT ;
 
 notes: note | notes note;
 
@@ -37,13 +37,46 @@ INT: "[0-9]*" ;
 COMMENT: "#.*$" :
 ```
 
-The `fill` parameter specifies the fill parameter for the PWM wave.
+Example:
 
-The `multiplier` multiplies all lengths by that amount.
+```
+# channel
+0
+# begin parameters
+{
+  NPS 3                 # all of these will have reasonable
+  Fill 128              # default
+  MaxVol 128            #
+  A 300                 # if one is not specified, its last
+  D 400                 # specified value for this channel
+  S 200                 # will be kept
+  R 100
+  Filter 12000
+  LFODepth 60
+  LFOFreq 20
+  LFOPhase 20
+  LFOFMDepth 32
+# end parameters
+}
+# notes
+1C4 7D4 ;
+```
+
+The `Fill` parameter specifies the fill parameter for the PWM wave.
+
+The `NPS` (Notes per second) parameter specifies how many 1-length notes will be played per second.
+
+The `MaxVol` controls the master volume of the channel. `A`, `D`, `S`, `R` configure the ADSR envelope.
+
+`Filter` is the frequency of a low pass filter applied over the signal.
+
+The `LFO*` parameters control the LFO for each channel. The LFO is a sine.
 
 The same channel can apear in multiple samples; for each subsequent appearance, the notes will be appended to the previous samples for that channel.
 
-Comments are ignored.
+The format of a note is `<length><base_note><accidental?><octave>`. The length is a multiple of `NPS`.
+
+`# Comments` are ignored.
 
 But that will change
 --------------------
@@ -152,27 +185,6 @@ TODO:
 JakMuse v2.0 will be released when there are no more TODO items for it.
 
 Tentative syntax supporting optional parameters:
-```
-# channel
-0
-# begin parameters
-{
-  NPS = 3                 # all of these will have reasonable
-  Fill = 128              # default
-  MaxVol = 128            #
-  A = 300                 # if one is not specified, its last
-  D = 400                 # specified value for this channel
-  S = 200                 # will be kept
-  R = 100
-  Filter = 12000
-  LFODepth = 60
-  LFOFreq = 20
-  LFOPhase = 20 # maybe
-# end parameters
-}
-# notes
-1C4 7D4 ;
-```
 
 Test files
 ==========
