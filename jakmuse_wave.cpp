@@ -1,12 +1,5 @@
-#ifndef _MSC_VER
-typedef int8_t _int8;
-typedef uint16_t _int16;
-typedef uint32_t _int32;
-#else
-# include <cstdint>
-#endif
-
 #include "jakmuse_common.h"
+#include <cstdint>
 #include <vector>
 #include <cstdio>
 
