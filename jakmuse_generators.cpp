@@ -1,6 +1,9 @@
 #include <cmath>
 #include "jakmuse_common.h"
 
+// in semitones
+#define LFO_TUNING_MAX 1.f
+
 static float _square(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsigned short fill)
 {
     if(Ns == 0) return 0.f;
@@ -67,19 +70,10 @@ void init_generators()
 float Generator::operator()()
 {
     // grab the 'frequency' (wavelength, actually)
-    unsigned Ns = state_.pub.def.Ns;
-    unsigned last_Ns = state_.priv.last_Ns;
-
-    // compute LFO sample
-    float lfo_sample = cosf(state_.priv.k
-            * (float)state_.pub.lfo.Ns * 2.f * 3.14159f
-            + (float)state_.pub.lfo.phase);
-
-    // apply LFO frequency modulation
-    Ns = state_.pub.lfo.freq_modulation_depth * lfo_sample * Ns
-        + (1.f - state_.pub.lfo.freq_modulation_depth) * Ns;
-    last_Ns = state_.pub.lfo.freq_modulation_depth * lfo_sample * last_Ns
-        + (1.f - state_.pub.lfo.freq_modulation_depth) * last_Ns;
+    unsigned freq = state_.pub.def.freq;
+    unsigned last_freq = state_.priv.last_freq;
+    unsigned Ns = (freq) ? JAKMUSE_SAMPLES_PER_SECOND / freq : 0;
+    unsigned last_Ns = (last_freq) ? JAKMUSE_SAMPLES_PER_SECOND / last_freq : 0;
 
     // compute base sample
     float base = fn_(state_.priv.k, state_.priv.noise_regs, Ns, state_.pub.def.fill);
@@ -106,7 +100,7 @@ float Generator::operator()()
     }
 
     // don't check the modulated Ns here; Ns == 0 means no note is input
-    if(state_.pub.def.Ns == 0
+    if(state_.pub.def.freq == 0
             && ADSR_COUNTER
             < state_.pub.volume.R)
     {
@@ -121,6 +115,10 @@ float Generator::operator()()
 #undef ADSR_COUNTER
 
     // apply amplitude lfo
+    float lfo_sample = cosf(state_.priv.k
+            * (float)state_.pub.lfo.freq / JAKMUSE_SAMPLES_PER_SECOND
+            * 2.f * 3.14159f
+            + (float)state_.pub.lfo.phase);
     base = state_.pub.lfo.depth * lfo_sample * base
         + (1.f - state_.pub.lfo.depth) * base;
 

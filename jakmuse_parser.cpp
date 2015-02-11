@@ -102,11 +102,6 @@ static void process_params(
     if((found = params.find("NPS")) != params.end()) {
         scale = found->second;
     }
-    if((found = params.find("LFOFreq")) != params.end()) {
-        unsigned freq = found->second;
-        unsigned Ns = (freq) ? (JAKMUSE_SAMPLES_PER_SECOND / freq) : 0;
-        gen.SetLfoWaveLength(Ns);
-    }
     if((found = params.find("Filter")) != params.end()) {
         float filter_RC = 1.f / (2.f * 3.14159f * found->second);
         static float timestep = 1.f / JAKMUSE_SAMPLES_PER_SECOND;
@@ -114,25 +109,33 @@ static void process_params(
 
         gen.SetFilterAlpha(filter_alpha);
     }
-    if((found = params.find("S")) != params.end()) {
-        float sustain = (float)found->second / 255.f;
-        gen.SetEnvelopeS(sustain);
-    }
 
+#define process_params_CONDITION_float(KEY, VARNAME) \
+    if((found = params.find(#KEY)) != params.end()) { \
+        float val = (float)found->second / 255.f; \
+        gen.Set##VARNAME(val); \
+    }
+#define process_params_CONDITION_duration(KEY, VARNAME) \
+    if((found = params.find(#KEY)) != params.end()) { \
+        unsigned val = (float)found->second / 4096.f * JAKMUSE_SAMPLES_PER_SECOND; \
+        gen.Set##VARNAME(val); \
+    }
 #define process_params_CONDITION(KEY, VARNAME) \
     if((found = params.find(#KEY)) != params.end()) { \
         gen.Set##VARNAME(found->second); \
     }
 
+    process_params_CONDITION_float(MaxVol, MaxVol);
     process_params_CONDITION(Fill, Fill);
-    process_params_CONDITION(MaxVol, MaxVol);
-    process_params_CONDITION(A, EnvelopeA);
-    process_params_CONDITION(D, EnvelopeD);
-    process_params_CONDITION(R, EnvelopeR);
-    process_params_CONDITION(LFODepth, LfoDepth);
-    process_params_CONDITION(LFOFMDepth, LfoFrequencyModulationDepth);
-    process_params_CONDITION(LFOPhase, LfoPhase);
+    process_params_CONDITION_duration(A, EnvelopeA);
+    process_params_CONDITION_duration(D, EnvelopeD);
+    process_params_CONDITION_float(S, EnvelopeS);
+    process_params_CONDITION_duration(R, EnvelopeR);
+    process_params_CONDITION(LFOFreq, LfoFrequency);
+    process_params_CONDITION_duration(LFOPhase, LfoPhase);
+    process_params_CONDITION_float(LFODepth, LfoDepth);
 #undef process_params_CONDITION
+#undef process_params_CONDITION_float
 }
 
 void parse()
@@ -208,8 +211,7 @@ void parse()
             unsigned numSamples =
                 JAKMUSE_SAMPLES_PER_SECOND / scale * length;
 
-            unsigned Ns = (frequency) ? JAKMUSE_SAMPLES_PER_SECOND / frequency : 0;
-            gen.NewNote(Ns);
+            gen.NewNote(frequency);
 
             for(size_t i = 0; i < numSamples; ++i) {
                 pwm_t sample = g_generators[channel]();

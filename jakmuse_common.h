@@ -3,12 +3,10 @@
 
 #include <vector>
 #include <cstddef>
-#include <cstdio> // DEBUGGING
 
 #define JAKMUSE_NUMCHANNELS 7
 
-#define JAKMUSE_SAMPLES_PER_SECOND 11025
-//#define JAKMUSE_SAMPLES_PER_SECOND 44100
+#define JAKMUSE_SAMPLES_PER_SECOND 44100
 #define JAKMUSE_BUFFER_LEN 4096
 
 typedef float pwm_t;
@@ -24,7 +22,7 @@ typedef struct {
 
 typedef struct {
     struct {
-        unsigned Ns, fill;
+        unsigned freq, fill;
         float alpha;
     } def;
     struct {
@@ -33,7 +31,7 @@ typedef struct {
         unsigned A, D, R;
     } volume;
     struct {
-        unsigned Ns, phase;
+        unsigned freq, phase;
         float depth;
         float freq_modulation_depth;
     } lfo;
@@ -46,7 +44,7 @@ typedef struct {
     struct {
         unsigned k;
         noise_reg_t noise_regs[2];
-        unsigned last_Ns;
+        unsigned last_freq;
         float rc_reg;
         unsigned adsr_counter;
     } priv;
@@ -101,8 +99,6 @@ typedef class Generator
                     0, 0,
                     // depth
                     0.f,
-                    // frequency modulation depth,
-                    0.f,
                 },
             },
         };
@@ -119,7 +115,7 @@ public:
 #endif
 
 
-    void SetWaveLength(unsigned Ns) { state_.pub.def.Ns = Ns; }
+    void SetFrequency(unsigned freq) { state_.pub.def.freq = freq; }
     void SetFill(unsigned fill) { state_.pub.def.fill = fill; }
     void SetFilterAlpha(float alpha) { state_.pub.def.alpha = alpha; }
     void SetMaxVol(float vol) { state_.pub.volume.maxvol = vol; }
@@ -127,19 +123,16 @@ public:
     void SetEnvelopeD(unsigned D) { state_.pub.volume.D = D; }
     void SetEnvelopeS(float S) { state_.pub.volume.S = S; }
     void SetEnvelopeR(unsigned R) { state_.pub.volume.R = R; }
-    void SetLfoWaveLength(unsigned Ns) { state_.pub.lfo.Ns = Ns; }
+    void SetLfoFrequency(unsigned freq) { state_.pub.lfo.freq = freq; }
     void SetLfoPhase(unsigned phase) { state_.pub.lfo.phase = phase; }
     void SetLfoDepth(float depth) { state_.pub.lfo.depth = depth; }
-    void SetLfoFrequencyModulationDepth(float depth) { state_.pub.lfo.freq_modulation_depth = depth; }
 
-    void NewNote(unsigned wavelength)
+    void NewNote(unsigned frequency)
     {
-        state_.priv.last_Ns = state_.pub.def.Ns;
-        state_.pub.def.Ns = wavelength;
+        state_.priv.last_freq = state_.pub.def.freq;
+        state_.pub.def.freq = frequency;
         state_.priv.adsr_counter = 0;
-        state_.priv.k = 0;
-
-        printf("sustain: %f\n", state_.pub.volume.S);
+        //state_.priv.k = 0;
     }
 
     float operator()();
