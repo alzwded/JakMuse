@@ -5,8 +5,6 @@ Synthesizes 7 sound signals based on a textual representation of musical notes.
 
 The format is described below.
 
-_(note: the documentation is a bit out of date on account of the re-write)_
-
 Input format
 ============
 
@@ -78,23 +76,10 @@ The format of a note is `<length><base_note><accidental?><octave>`. The length i
 
 `# Comments` are ignored.
 
-But that will change
---------------------
-
-~~For v2.0 the sample format will be changed to:~~ no it won't.
-
-```yacc
-sample: CHANNEL INT<fill> INT<divisor> INT<volume> notes ";" ;
-```
-
-~~The `divisor` specifies by what amount to divide a second. E.g. if the divisor is `64` and your notes are `32C4 32E4`, a C4 and an E4 of equal length will be played over the span of a second (give or take; the wav output will be closer to a second than realtime playback).~~
-
-~~The `volume` option specifies the amplitude of the signal. If you're using only one channel, 255 will be a good option. If you're using 7 you may consider using 32. (around `2^(8-log(Nchannels))`)~~
-
-*TODO* develop a nice little media tracking document format. It's a bit described in the Roadmap.
-
 Examples
 --------
+
+**NOTE**: the samples are not in a stable working order because the parser is going through a re-write.
 
 You can see examples/samples in the `./samples/` subdirectory.
 
@@ -107,15 +92,21 @@ or something like that.
 
 You can exit via `CTRL-C` (a.k.a. SIGINT a.k.a. interrupt signal).
 
+Command line options
+====================
+
+| option                    | effect                        |
+|---------------------------|-------------------------------|
+| -w filename               | output a PCM wave file & exit |
+| -v                        | prints the version & exits    |
+
 Output
 ======
 
-Text
+Wave
 ----
 
-It outputs a list of the frequencies for all channels and a list for the fill factors for all channels.
-
-This is useful to see what exactly is contained in each of the five buffers. Okay, it's not all that useful, but it's interesting to look at numbers.
+You can specify the `-w filename` command line option to jakmuse. The result will be a PCM wave file @11kHz, mono, 16bit.
 
 Audio
 -----
@@ -188,6 +179,8 @@ Tentative syntax supporting optional parameters:
 
 Test files
 ==========
+
+**NOTE**: the samples are not in a stable working order because the parser is going through a re-write.
 
 **Disclaimer**: I have used the word _test_ badly in the following table.
 

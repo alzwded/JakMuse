@@ -1,7 +1,15 @@
 #include "jakmuse_common.h"
 
+#ifndef VERSION
+# error "VERSION is not defined."
+#endif
+
 #include <cstdio>
 #include <cassert>
+#include <cstdlib>
+
+#include <vector>
+#include <string>
 
 size_t g_maxChannelLen = 0;
 channels_t g_channels;
@@ -19,6 +27,12 @@ for(size_t i = 0; i < JAKMUSE_NUMCHANNELS; ++i) {\
 
 int main(int argc, char* argv[])
 {
+    if(argc > 1 && strcmp(argv[1], "-v") == 0) {
+        printf("JakMuse v%s, Copyright Vlad Mesco 2014\n", VERSION);
+        printf("  available under the terms of the Simplified BSD License");
+        exit(255);
+    }
+
     extern void init_generators();
     init_generators();
 
@@ -28,8 +42,27 @@ int main(int argc, char* argv[])
     extern void mix();
     mix();
 
-    extern void play_music();
-    play_music();
+    std::string filename("jakmuse.wav");
+    if(argc > 1 && strcmp(argv[1], "-w") == 0) {
+        if(argc > 2) {
+            filename.assign(argv[2]);
+        }
+
+        extern bool wav_write_file(std::string const&, std::vector<short> const&, unsigned);
+        extern std::vector<short> g_wav;
+        auto hr = wav_write_file(filename, g_wav, JAKMUSE_SAMPLES_PER_SECOND);
+
+        if(hr) {
+            printf("Wrote %s\n", filename.c_str());
+            exit(0);
+        } else {
+            printf("Could not write %s\n", filename.c_str());
+            exit(hr);
+        }
+    } else {
+        extern void play_music();
+        play_music();
+    }
 
     return 0;
 }

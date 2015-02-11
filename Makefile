@@ -1,5 +1,6 @@
+VERSION = "2.0"
 CPP = g++
-CFLAGS = -c -g --std=gnu++11
+CFLAGS = -c -g --std=gnu++11 -DVERSION=$(VERSION)
 HEAD = jakmuse_common.h jakmuse_sound.hpp
 OBJS = jakmuse.o jakmuse_parser.o jakmuse_sound.o jakmuse_generators.o jakmuse_wave.o
 EXENAME = jakmuse

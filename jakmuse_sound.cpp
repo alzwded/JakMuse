@@ -19,7 +19,7 @@
 #include <signal.h>
 
 std::vector<short> g_wav;
-size_t g_it;
+static size_t g_it;
 
 #define FRAME_LEN  8500000l
 #define INSTR_PER_FRAME 125000l
