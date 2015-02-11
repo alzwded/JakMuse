@@ -26,7 +26,7 @@ static void wav_write_header(FILE* f, unsigned samplPerSec, unsigned numSamples)
         'fmt ',
         16,
         0x0001,
-        2,
+        1,
         samplPerSec,
         samplPerSec * 2 * 1,
         2 * 1,
