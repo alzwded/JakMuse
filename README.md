@@ -163,7 +163,7 @@ TODO:
 * [x] add simple volume control to samples (alongside fill/phase and divisor) (v2.0)
 * [x] add two more phase-shifted sine channels (v2.0)
 * [x] low pass filter for generators (v2.0)
-* [x] advanced ~~ADSR~~ ADS volume (v2.0)
+* [x] advanced ~~ADSR~~ ~~ADS~~ ADSR volume (v2.0)
 * [x] make generators objects because the internal counter leaks across channels (yes, this is a bug caused by static variables in case you were wondering) (v2.0)
 * [x] experiment with filtering after ADS envelope (tied to the above) (v2.0)
 * [x] support LFO (v2.0)
