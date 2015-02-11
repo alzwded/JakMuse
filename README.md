@@ -47,15 +47,14 @@ Example:
   NPS 3                 # all of these will have reasonable
   Fill 128              # default
   MaxVol 128            #
-  A 300                 # if one is not specified, its last
-  D 400                 # specified value for this channel
+  A 40                  # if one is not specified, its last
+  D 47                  # specified value for this channel
   S 200                 # will be kept
-  R 100
+  R 10 
   Filter 12000
   LFODepth 60
   LFOFreq 20
   LFOPhase 20
-  LFOFMDepth 32
 # end parameters
 }
 # notes
@@ -70,7 +69,7 @@ The `MaxVol` controls the master volume of the channel. `A`, `D`, `S`, `R` confi
 
 `Filter` is the frequency of a low pass filter applied over the signal.
 
-The `LFO*` parameters control the LFO for each channel. The LFO is a sine.
+The `LFO*` parameters control the LFO-based amplitude modulation for each channel. The LFO is a sine.
 
 The same channel can apear in multiple samples; for each subsequent appearance, the notes will be appended to the previous samples for that channel.
 
@@ -108,7 +107,7 @@ Output
 Wave
 ----
 
-You can specify the `-w filename` command line option to jakmuse. The result will be a PCM wave file @11kHz, mono, 16bit.
+You can specify the `-w filename` command line option to jakmuse. The result will be a PCM wave file @44kHz, mono, 16bit.
 
 Audio
 -----
@@ -144,6 +143,8 @@ You can use other versions of SDL, but you need to update the SDLROOT var/macro 
 Apart from the regular `g++` & `make`, you need `libSDL-devel` (or whatever your distro calls it). Then, just run `make` and it should compiler.
 
 `g++` needs to be recent enough to support C++11. (e.g. 4.8.x is a good version)
+
+You need libSDL.so version 1.2.x installed on your system.
 
 Roadmap
 =======
