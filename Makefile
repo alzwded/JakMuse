@@ -1,6 +1,6 @@
-VERSION = "2.0"
+VERSION = "\"2.0\""
 CPP = g++
-CFLAGS = -c -g --std=gnu++11 -DVERSION=$(VERSION)
+CFLAGS = -c -g --std=gnu++11 -DVERSION=$(VERSION) -Wno-multichar -O3
 HEAD = jakmuse_common.h
 OBJS = jakmuse.o jakmuse_parser.o jakmuse_sound.o jakmuse_generators.o jakmuse_wave.o
 EXENAME = jakmuse

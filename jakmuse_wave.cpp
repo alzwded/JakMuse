@@ -1,7 +1,8 @@
 #include "jakmuse_common.h"
 #include <cstdint>
-#include <vector>
 #include <cstdio>
+#include <vector>
+#include <string>
 
 static void wav_write_header(FILE* f, unsigned samplPerSec, unsigned numSamples)
 {
