@@ -108,9 +108,11 @@ typedef class Generator
     friend void init_generators();
 public:
     Generator(Generator const&) = default;
-    Generator(Generator &&) = default;
     Generator& operator=(Generator const&) = default;
+#ifndef _MSC_VER
+    Generator(Generator &&) = default;
     Generator& operator=(Generator &&) = default;
+#endif
 
     void SetNs(unsigned Ns) { state_.pub.def.Ns = Ns; }
     void SetFill(unsigned fill) { state_.pub.def.fill = fill; }

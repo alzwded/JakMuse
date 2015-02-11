@@ -7,8 +7,14 @@
 #include <cassert>
 #include <ctime>
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_audio.h>
+#ifndef _MSC_VER
+# include <SDL/SDL.h>
+# include <SDL/SDL_audio.h>
+#else
+# include <SDL.h>
+# include <SDL_audio.h>
+# include <algorithm>
+#endif
 
 #include <signal.h>
 

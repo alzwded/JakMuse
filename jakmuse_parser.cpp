@@ -1,5 +1,9 @@
 #include "jakmuse_common.h"
 
+#ifdef _MSC_VER
+# include <algorithm>
+#endif
+
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
@@ -59,6 +63,9 @@ static signed translate_note(char name)
     case 'B': return 11;
     default: ENSURE(isnote(name));
     }
+
+    // no warning
+    return 0;
 }
 
 static unsigned short get_frequency(char name, signed scale, char accidental)

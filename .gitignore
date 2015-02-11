@@ -1,6 +1,7 @@
 # Object files
 *.o
 *.ko
+*.obj
 
 # Libraries
 *.lib
@@ -19,3 +20,7 @@
 jakmuse
 *.log
 log
+
+# vendor
+SDL.dll
+SDL-*
