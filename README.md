@@ -93,6 +93,29 @@ Right now, SDL is used for actual audio output.
 
 For timing, a hacked-up implementation of a of a timer using clock_nanosleepand repeated calls to clock_gettime is used as a pseudo real-time interrupt. This means that while a song sounds consistent on _a_ computer, different computers tend to lag more or less based on their internal clock resolution (sound round to 10ms, some have a better resolution, etc). (fox example, my netbook lags like 5-10% behind my desktop, but it doesn't stutter or jitter or anything) What this means is that until I figure out a way to tap into a real real-time clock that's actually realtime, don't try synchronizing two computers to play a masterwork composition together.
 
+Building on windows
+===================
+
+Works with Visual Studio 2013.
+
+You need to run nmake from the visual studio command line shell (if you don't know what that is, try *Start/Programs/Visual Studio 2013/Tools/Developer Command Prompt for VS2013*.
+
+Then, grab SDL from [here](https://www.libsdl.org/release/SDL-devel-1.2.15-VC.zip) (SDL-devel-1.2.15-VC) and unzip it in the JakMuse\win32 folder.
+
+```batch
+cd \path\to\JakMuse\win32
+nmake
+```
+
+You can use other versions of SDL, but you need to update the SDLROOT var/macro for nmake.
+
+Building on linux
+=================
+
+Apart from the regular `g++` & `make`, you need `libSDL-devel` (or whatever your distro calls it). Then, just run `make` and it should compiler.
+
+`g++` needs to be recent enough to support C++11. (e.g. 4.8.x is a good version)
+
 Roadmap
 =======
 
