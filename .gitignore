@@ -25,6 +25,7 @@
 jakmuse
 *.log
 log
+*.dwo
 
 # output data files
 *.wav
