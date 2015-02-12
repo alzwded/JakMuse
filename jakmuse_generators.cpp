@@ -101,12 +101,12 @@ float Generator::operator()()
 
     // don't check the modulated Ns here; Ns == 0 means no note is input
     if(state_.pub.def.freq == 0
-            && ADSR_COUNTER
+            && ADSR_COUNTER - state_.pub.volume.A - state_.pub.volume.D
             < state_.pub.volume.R)
     {
-        base = (1.f
-                - (float)(ADSR_COUNTER)
-                / state_.pub.volume.R)
+        base = (1.f - (float)(ADSR_COUNTER
+                        - state_.pub.volume.A - state_.pub.volume.D)
+                    / state_.pub.volume.R)
             * state_.pub.volume.maxvol
             * state_.pub.volume.S
             * prev;

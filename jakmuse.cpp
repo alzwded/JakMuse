@@ -40,6 +40,9 @@ int main(int argc, char* argv[])
     extern void parse();
     parse();
 
+    extern void compile();
+    compile();
+
     extern void mix();
     mix();
 

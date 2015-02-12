@@ -91,6 +91,11 @@ You can listen to them by running
 
 or something like that.
 
+Or you can dump a .wav file:
+```batch
+jakmuse -w beat2.wav <samples/beat2
+```
+
 You can exit via `CTRL-C` (a.k.a. SIGINT a.k.a. interrupt signal).
 
 Command line options
@@ -170,12 +175,11 @@ TODO:
 * [x] support LFO (v2.0)
 * [x] output wav file (v2.0)
 * [x] improve parser to modify some parameters in an optional way (e.g. I set ADSR once for channel 0 but I still want to modify its fill factor without having to re-specify ADSR) because the amount of parameters is becoming unweildly (8 + 5 more on the way) (v2.0)
+* [x] multi-threaded compilation of channels (v2.0)
 * [ ] support doublesharp and doubleflat (v2.1)
 * [ ] support ~~bends/glides~~ glide parameter (v2.2)
 * [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
 * [ ] build interactive library (e.g. to be used in games) (v3.0)
-  + [ ] separate parsing and compilation
-  + [ ] multi-threaded compilation of channels
   + [ ] continuous _music_ channels
   + [ ] one-off jingle/SFX channels as overrides
 

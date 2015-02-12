@@ -16,6 +16,7 @@
 # visual studio stuff
 *.ilk
 *.pdb
+*.suo
 
 # Executables
 *.exe

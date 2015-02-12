@@ -19,6 +19,8 @@
 static int toknum = 0;
 static std::string token("");
 
+channel_sequences_t g_channel_sequences;
+
 #define ENSURE(a) do{ \
     if(!(a)) cancel(#a); \
 }while(0)
@@ -92,54 +94,9 @@ static unsigned short get_frequency(char name, signed scale, char accidental)
     return (unsigned short)(440.0f * std::pow(2.0f, (float)step / 12.0f));
 }
 
-static void process_params(
-        std::map<std::string, unsigned>& params,
-        generator_t& gen,
-        unsigned& scale)
-{
-    std::map<std::string, unsigned>::iterator found;
-    // scale and lfo wave length are special...
-    if((found = params.find("NPS")) != params.end()) {
-        scale = found->second;
-    }
-    if((found = params.find("Filter")) != params.end()) {
-        float filter_RC = 1.f / (2.f * 3.14159f * found->second);
-        static float timestep = 1.f / JAKMUSE_SAMPLES_PER_SECOND;
-        float filter_alpha = timestep / (timestep + filter_RC);
-
-        gen.SetFilterAlpha(filter_alpha);
-    }
-
-#define process_params_CONDITION_float(KEY, VARNAME) \
-    if((found = params.find(#KEY)) != params.end()) { \
-        float val = (float)found->second / 255.f; \
-        gen.Set##VARNAME(val); \
-    }
-#define process_params_CONDITION_duration(KEY, VARNAME) \
-    if((found = params.find(#KEY)) != params.end()) { \
-        unsigned val = (float)found->second / 4096.f * JAKMUSE_SAMPLES_PER_SECOND; \
-        gen.Set##VARNAME(val); \
-    }
-#define process_params_CONDITION(KEY, VARNAME) \
-    if((found = params.find(#KEY)) != params.end()) { \
-        gen.Set##VARNAME(found->second); \
-    }
-
-    process_params_CONDITION_float(MaxVol, MaxVol);
-    process_params_CONDITION(Fill, Fill);
-    process_params_CONDITION_duration(A, EnvelopeA);
-    process_params_CONDITION_duration(D, EnvelopeD);
-    process_params_CONDITION_float(S, EnvelopeS);
-    process_params_CONDITION_duration(R, EnvelopeR);
-    process_params_CONDITION(LFOFreq, LfoFrequency);
-    process_params_CONDITION_duration(LFOPhase, LfoPhase);
-    process_params_CONDITION_float(LFODepth, LfoDepth);
-#undef process_params_CONDITION
-#undef process_params_CONDITION_float
-}
-
 void parse()
 {
+    g_channel_sequences.resize(JAKMUSE_NUMCHANNELS);
     // CHANNEL '{' param_list '}' note_list ';' ;
     while(!std::cin.eof()) {
         // get channel
@@ -164,9 +121,8 @@ void parse()
         } while(1);
 
         // configure the generator
-        Generator& gen = g_generators[channel];
-        unsigned scale(0);
-        process_params(params, gen, scale);
+        //Generator& gen = g_generators[channel];
+        sequence_t sequence = { params };
 
         // start reading notes
         std::string s;
@@ -208,18 +164,10 @@ void parse()
                 frequency = get_frequency(note, offset, accidental);
             }
 
-            unsigned numSamples =
-                JAKMUSE_SAMPLES_PER_SECOND / scale * length;
-
-            gen.NewNote(frequency);
-
-            for(size_t i = 0; i < numSamples; ++i) {
-                pwm_t sample = g_generators[channel]();
-                g_channels[channel].push_back(sample);
-            }
-
-            g_maxChannelLen = std::max(g_maxChannelLen, g_channels[channel].size());
+            note_t s_note = { length, frequency };
+            sequence.notes.push_back(s_note);
         } while(1);
+        g_channel_sequences[channel].push_back(sequence);
         ENSURE(std::cin.good());
     }
 }

@@ -2,6 +2,7 @@
 #define JAKMUSE_COMMON_H
 
 #include <vector>
+#include <map>
 #include <cstddef>
 
 #define JAKMUSE_NUMCHANNELS 7
@@ -131,8 +132,7 @@ public:
     {
         state_.priv.last_freq = state_.pub.def.freq;
         state_.pub.def.freq = frequency;
-        state_.priv.adsr_counter = 0;
-        //state_.priv.k = 0;
+        if(frequency) state_.priv.adsr_counter = 0;
     }
 
     float operator()();
@@ -140,5 +140,19 @@ public:
 
 typedef std::vector<generator_t> generators_t;
 extern generators_t g_generators;
+
+// TODO optimize moves later; right now get omp working
+typedef std::map<std::string, unsigned> params_map_t;
+typedef struct {
+    unsigned length;
+    unsigned frequency;
+} note_t;
+typedef struct {
+    params_map_t params;
+    std::vector<note_t> notes;
+} sequence_t;
+typedef std::vector<sequence_t> sequences_t;
+typedef std::vector<sequences_t> channel_sequences_t;
+extern channel_sequences_t g_channel_sequences;
 
 #endif
