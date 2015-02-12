@@ -32,7 +32,7 @@ for(size_t i = 0; i < JAKMUSE_NUMCHANNELS; ++i) {\
 int main(int argc, char* argv[])
 {
     if(argc > 1 && strcmp(argv[1], "-v") == 0) {
-        printf("JakMuse v%s, Copyright Vlad Mesco %s\n", VERSION, COPYRIGHT_YEAR);
+        printf("JakMuse v%s, Copyright %s, Vlad Mesco\n", VERSION, COPYRIGHT_YEAR);
         printf("  available under the terms of the Simplified BSD License\n");
         exit(255);
     }
