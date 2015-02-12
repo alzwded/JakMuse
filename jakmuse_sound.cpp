@@ -20,23 +20,6 @@
 std::vector<short> g_wav;
 static size_t g_it;
 
-#define FRAME_LEN  8500000l
-#define INSTR_PER_FRAME 125000l
-// why does clock_nanosleep work as intended but nanosleep yields different
-//    sleep amounts on different computers?
-#define SLEEP(FIN, INI) do{\
-    ts.tv_sec = 0; \
-    ts.tv_nsec = FRAME_LEN - (FIN.tv_nsec - INI.tv_nsec); \
-    clock_nanosleep(CLOCK_MONOTONIC, 0, &ts, NULL); \
-}while(0)
-
-namespace{
-struct context {
-    size_t i, k[5];
-    SDL_AudioSpec* spec;
-};
-} // namespace
-
 static void siginth(int num)
 {
     printf("Exiting\n");
@@ -45,10 +28,8 @@ static void siginth(int num)
     exit(0);
 }
 
-static void audio_callback(void* data, Uint8* stream, int length)
+static void audio_callback(void*, Uint8* stream, int length)
 {
-    context* ctx = (context*)(data);
-    SDL_AudioSpec spec = *((SDL_AudioSpec*)ctx->spec);
     int realLength = std::min(length/2, (int)g_wav.size());
 
     if(g_it + realLength < g_wav.size()) {
@@ -63,7 +44,6 @@ static void audio_callback(void* data, Uint8* stream, int length)
 void play_music()
 {
     SDL_AudioSpec as, spec;
-    context ctx;
 
     SDL_Init(SDL_INIT_AUDIO);
     signal(SIGINT, &siginth);
@@ -74,11 +54,7 @@ void play_music()
     as.channels = 1;
     as.samples = JAKMUSE_BUFFER_LEN;
     as.callback = &audio_callback;
-    // pass a pointer with the obtained audio spec back to the callback
-    ctx.spec = &spec;
-    ctx.i = 0;
-    memset(ctx.k, 0, 5 * sizeof(size_t));
-    as.userdata = &ctx;
+    as.userdata = NULL;
 
     g_it = 0;
 
