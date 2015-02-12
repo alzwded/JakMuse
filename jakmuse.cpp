@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <string>
+#include <algorithm>
 
 size_t g_maxChannelLen = 0;
 channels_t g_channels;
@@ -42,9 +43,16 @@ int main(int argc, char* argv[])
 
     extern void compile();
     compile();
+    // free up memory
+    g_channel_sequences.clear();
 
     extern void mix();
     mix();
+    // free up memory
+    std::for_each(&g_channels[0], &g_channels[JAKMUSE_NUMCHANNELS],
+            [](pwm_channel_t& chan) {
+                chan.clear();
+            });
 
     std::string filename("jakmuse.wav");
     if(argc > 1 && strcmp(argv[1], "-w") == 0) {
