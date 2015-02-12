@@ -1,0 +1,102 @@
+float current = (prevNoteID - newNoteID) / 12.0f;
+float b1 = exp(-1 / slewTime);
+
+for(int i = 0; i < sampleFrames; i++)
+{
+    current = b1 * current;
+
+    slewOutput[i] = current;
+}
+
+
+
+
+
+the idea is to match the phase, something like:
+one T0 sin@440, one T1 sin@445, one T2 sin@450, one T3 sin@455 ... one TN sin@466 (A#4), loop TN sin@466
+
+
+detect T0@last_freq, TN@freq
+generate Ts[] as a sort of geometric progression
+change frequency whenever lk == 0
+
+f	440 .. 466
+T	100 .. 94	diff = one-other+1 = 7
+gl_t	0.2s		glide time
+gl_T	8820		glide time in discreet samples
+
+in 8820 (rounded up?) I need to step through 100, 99, .. 94
+
+nc = 8820/(100-94+1) = 1260
+after 1470 approximated at k*T[i], sync phase (continue until lk == 0), then move to next freq
+
+breakdown:
+100	T0:   0*..(1260)..1300
+99	T1: 1300..(2560)..2574
+98	T2: 2574..(3834)..3920
+97	T3: 3920..(5180)..5238
+96      T4: 5238..(6498)..6596
+95	T5: 6596..(7856)..7885
+94	TN: 7885..(7896)..infinity
+
+0*: t=0 actually starts when lk == 0
+
+f	440 .. 1760	(A4 ~> A6)
+T	100 .. 25	diff = 76
+gl_t	0.2s
+gl_T	8820
+
+actual idx = round(
+  (current_nb_of_samples + num_samples_per_each)
+  / num_samples_per_each
+)
+
+100	T0:   0*..  (76).. 100    // actually 0..116..200
+99	T1:  100.. (176).. 198    // 200..316..396
+98	T2:  198.. (274).. 294    // skipped
+97      T3:  294.. (370).. 388    // 396..512..582
+96	skipped		          // skipped
+95	T5:  388.. (464).. 475    // 582..etc
+94      T6:  etc
+
+f	440 .. 415
+T	100 .. 106	diff = 6
+gl_t	0.2s
+gl_T	8820
+
+breakdown:
+100	T0:   0*..(1470)..1500
+101	T1: 1500..(2970)..2020
+102	T2: 2020..(3490)..3570
+103	T3: 3570..(5040)..5047
+103	T3: 5047..(6517)..6592
+104	T4: 6592..(8062)..8112
+106     T6: 8112..(9582)..9646..infinity
+
+
+algorithm:
+f0 = (read)
+fN = (read)
+gl_Ns = (read)
+T0 = sampleRate / f0
+TN = sampleRate / fN 
+NsPerOnePeriod = gl_Ns / (T0 + TN)
+current_numSamples = 0
+counter = NsPerOnePeriod
+Ts = T0:1:TN
+idx = 0
+while(current_numSamples < gl_Ns) {
+  if(counter < NsPerOnePeriod) {
+    counter++
+    generate(Ts(idx), lk)
+  } else {
+    if(lk of Ts(idx) != 0) {
+      generate(Ts(idx), lk)
+    } else {
+      counter = 1
+      idx = int(round((current_numSamples +       NsPerOnePeriod)/NsPerOnePeriod))
+      generate(Ts(idx), lk)
+    }
+  }
+  current_numSamples++
+}
