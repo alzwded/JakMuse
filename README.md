@@ -183,12 +183,6 @@ TODO:
   + [ ] continuous _music_ channels
   + [ ] one-off jingle/SFX channels as overrides
 
-Notes on multi-threading:
-* noise generators cannot be parallelized because they are stateful. I don't want them to be the only channel type that's slow. Let them all be slow!
-* at least on one computer, tanh is apparently a choking point for threads
-* the only viable strategy I can think of that can yield (quite impressive, actually) results is to parse everything first, and them compile the channels later (in a forceful way)
-* flags: `gcc{-fopenmp,-lgomp}`, `cl{/openmp}`
-
 Test files
 ==========
 
