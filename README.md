@@ -190,6 +190,7 @@ TODO:
 * [x] improve parser to modify some parameters in an optional way (e.g. I set ADSR once for channel 0 but I still want to modify its fill factor without having to re-specify ADSR) because the amount of parameters is becoming unweildly (8 + 5 more on the way) (v2.0)
 * [x] multi-threaded compilation of channels (v2.0)
 * [x] support ~~bends/glides~~ glide parameter (v2.0)
+* [ ] implement phase distortion + LFOPhase becomes a parameter to a phase-distorsed LFO (v2.0)
 * [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
 * [ ] support pitch modulation (v2.5)
 * [ ] build interactive library (e.g. to be used in games; this needs a major rewrite (again)) (v3.0)
