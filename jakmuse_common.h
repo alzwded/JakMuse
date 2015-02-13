@@ -167,7 +167,9 @@ public:
         {
             unsigned T0 = JAKMUSE_SAMPLES_PER_SECOND / state_.priv.last_freq;
             unsigned TN = JAKMUSE_SAMPLES_PER_SECOND / state_.pub.def.freq;
-            state_.priv.gl_NsPerPeriod = state_.pub.glide.Ns / abs(T0 - TN + 1);
+            // cast it to long because cl complains it doesn't know which
+            //     abs to call
+            state_.priv.gl_NsPerPeriod = state_.pub.glide.Ns / abs((long)(T0 - TN + 1));
             state_.priv.gl_idx = 0;
             state_.priv.gl_counter = state_.priv.gl_NsPerPeriod;
             state_.priv.Ts.clear();
