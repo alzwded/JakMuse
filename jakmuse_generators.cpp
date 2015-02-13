@@ -38,8 +38,15 @@ static float _sine(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsi
     unsigned lk = k++ % Ns;
     // use cos in order to keep triangle and sine in phase
     // for fill = 128
-    float val_1 = cosf(1.f / Ns * 2.f * 3.14159f * lk
-            + 2.f * 3.14159f * fill / 256.f);
+    float zeroPosition = (float)fill / 255.f;
+    unsigned zp = Ns * zeroPosition;
+    float val_1 = sinf(3.14159f * 
+            ((lk < zp)
+            ? ((float)lk / zp)
+            : ( (float)(lk - zp)
+                    / (Ns - zp)
+                + 1.f))
+            );
 
     return val_1;
 }
@@ -116,9 +123,11 @@ float Generator::operator()()
             * base;
         ADSR_COUNTER++;
     } else if(ADSR_COUNTER - state_.pub.volume.A < state_.pub.volume.D) {
-        base = (1.f
+        float regl = (1.f
                 - (float)(ADSR_COUNTER - state_.pub.volume.A)
-                / state_.pub.volume.D)
+                / state_.pub.volume.D);
+        base = 
+            (regl * (1.f- state_.pub.volume.S) + (state_.pub.volume.S))
             * state_.pub.volume.maxvol
             * base;
         ADSR_COUNTER++;
@@ -142,10 +151,23 @@ float Generator::operator()()
 #undef ADSR_COUNTER
 
     // apply amplitude lfo
-    float lfo_sample = cosf(state_.priv.k
-            * (float)state_.pub.lfo.freq / JAKMUSE_SAMPLES_PER_SECOND
-            * 2.f * 3.14159f
-            + (float)state_.pub.lfo.phase);
+    //float lfo_sample = cosf(state_.priv.k
+    //        * (float)state_.pub.lfo.freq / JAKMUSE_SAMPLES_PER_SECOND
+    //        * 2.f * 3.14159f
+    //        + (float)state_.pub.lfo.phase);
+    unsigned lfo_Ns = (state_.pub.lfo.freq)
+        ? JAKMUSE_SAMPLES_PER_SECOND / state_.pub.lfo.freq
+        : 1
+        ;
+    unsigned lfo_lk = state_.priv.k % lfo_Ns;
+    unsigned lfo_zp = state_.pub.lfo.phase * lfo_Ns;
+    float lfo_sample = cosf(3.14159f *
+            ((lfo_lk < lfo_zp)
+             ? ((float)lfo_lk / lfo_zp)
+             : ( (float)(lfo_lk - lfo_zp)
+                     / (lfo_Ns - lfo_zp)
+                 + 1.f))
+            );
     base = state_.pub.lfo.depth * lfo_sample * base
         + (1.f - state_.pub.lfo.depth) * base;
 
@@ -158,4 +180,30 @@ float Generator::operator()()
     state_.priv.k++;
 
     return note;
+}
+
+void Generator::NewNote(unsigned frequency)
+{
+    state_.priv.last_freq = state_.pub.def.freq;
+    state_.pub.def.freq = frequency;
+    if(frequency) state_.priv.adsr_counter = 0;
+
+    if(state_.pub.glide.Ns
+            && state_.priv.last_freq
+            && state_.pub.def.freq)
+    {
+        unsigned T0 = JAKMUSE_SAMPLES_PER_SECOND / state_.priv.last_freq;
+        unsigned TN = JAKMUSE_SAMPLES_PER_SECOND / state_.pub.def.freq;
+        // cast it to long because cl complains it doesn't know which
+        //     abs to call
+        state_.priv.gl_NsPerPeriod = state_.pub.glide.Ns / abs((long)(T0 - TN + 1));
+        state_.priv.gl_idx = 0;
+        state_.priv.gl_counter = state_.priv.gl_NsPerPeriod;
+        state_.priv.Ts.clear();
+        state_.priv.gl_passed = 0;
+        for(unsigned T = T0; T != TN; T += (T0 < TN) - (T0 >= TN)) {
+            state_.priv.Ts.push_back(T);
+        }
+        state_.priv.Ts.push_back(TN);
+    }
 }

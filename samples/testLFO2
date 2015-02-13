@@ -1,0 +1,7 @@
+0 { NPS 3 MaxVol 128 A 80 D 140 S 140 R 300 Filter 800 LFODepth 80  LFOFreq 7 LFOPhase 128 }        1A4 1- 1C4 2B4 1- ;
+0 { NPS 3 MaxVol 128 A 80 D 140 S 140 R 300 Filter 800 LFODepth 80  LFOFreq 7 LFOPhase 80 }        1A4 1- 1C4 2B4 1- ;
+0 { NPS 3 MaxVol 128 A 80 D 140 S 140 R 300 Filter 800 LFODepth 80  LFOFreq 7 LFOPhase 30 }        1A4 1- 1C4 2B4 1- ;
+0 { NPS 3 } 6- 6- 6- ;
+5 { NPS 3 Fill 128 MaxVol 170 A 180 D 140 S 140 R 300 Filter 65534 LFODepth 0 LFOFreq 1 LFOPhase 128 Glide 512 } 6- 6- 6- 1A4 1- 1C4 2B4 1- ;
+5 { NPS 3 Fill 100 } 1A4 1- 1C4 2B4 1- ;
+5 { NPS 3 Fill 60 } 1A4 1- 1C4 2B4 1- ;

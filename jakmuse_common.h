@@ -32,9 +32,9 @@ typedef struct {
         unsigned A, D, R;
     } volume;
     struct {
-        unsigned freq, phase;
+        unsigned freq;
+        float phase;
         float depth;
-        float freq_modulation_depth;
     } lfo;
     struct {
         unsigned Ns;
@@ -118,8 +118,10 @@ typedef class Generator
                 },
                 // lfo
                 {
-                    // freq, phase
-                    0, 0,
+                    // freq
+                    0,
+                    // phase
+                    0.5f,
                     // depth
                     0.f,
                 },
@@ -151,35 +153,11 @@ public:
     void SetEnvelopeS(float S) { state_.pub.volume.S = S; }
     void SetEnvelopeR(unsigned R) { state_.pub.volume.R = R; }
     void SetLfoFrequency(unsigned freq) { state_.pub.lfo.freq = freq; }
-    void SetLfoPhase(unsigned phase) { state_.pub.lfo.phase = phase; }
+    void SetLfoPhase(float phase) { state_.pub.lfo.phase = phase; }
     void SetLfoDepth(float depth) { state_.pub.lfo.depth = depth; }
     void SetGlideDuration(unsigned numSamples) { state_.pub.glide.Ns = numSamples; }
 
-    void NewNote(unsigned frequency)
-    {
-        state_.priv.last_freq = state_.pub.def.freq;
-        state_.pub.def.freq = frequency;
-        if(frequency) state_.priv.adsr_counter = 0;
-
-        if(state_.pub.glide.Ns
-                && state_.priv.last_freq
-                && state_.pub.def.freq)
-        {
-            unsigned T0 = JAKMUSE_SAMPLES_PER_SECOND / state_.priv.last_freq;
-            unsigned TN = JAKMUSE_SAMPLES_PER_SECOND / state_.pub.def.freq;
-            // cast it to long because cl complains it doesn't know which
-            //     abs to call
-            state_.priv.gl_NsPerPeriod = state_.pub.glide.Ns / abs((long)(T0 - TN + 1));
-            state_.priv.gl_idx = 0;
-            state_.priv.gl_counter = state_.priv.gl_NsPerPeriod;
-            state_.priv.Ts.clear();
-            state_.priv.gl_passed = 0;
-            for(unsigned T = T0; T != TN; T += (T0 < TN) - (T0 >= TN)) {
-                state_.priv.Ts.push_back(T);
-            }
-            state_.priv.Ts.push_back(TN);
-        }
-    }
+    void NewNote(unsigned frequency);
 
     float operator()();
 } generator_t;

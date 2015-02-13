@@ -5,6 +5,16 @@ Synthesizes a handful of sound signals based on a textual representation of musi
 
 The format is described below.
 
+Signal Types
+------------
+
+* pulse-width signal
+* two types of noise (á là gameboy)
+* triangle (with phase distortion)
+* sine (with phase distortion)
+
+All these support ADSR envelopes, glide and RC filtering.
+
 Input format
 ============
 
@@ -190,7 +200,7 @@ TODO:
 * [x] improve parser to modify some parameters in an optional way (e.g. I set ADSR once for channel 0 but I still want to modify its fill factor without having to re-specify ADSR) because the amount of parameters is becoming unweildly (8 + 5 more on the way) (v2.0)
 * [x] multi-threaded compilation of channels (v2.0)
 * [x] support ~~bends/glides~~ glide parameter (v2.0)
-* [ ] implement simple phase distortion (1 inflection point) + LFOPhase becomes a parameter to a phase-distorsed LFO (v2.0)
+* [x] implement simple phase distortion (1 inflection point) + LFOPhase becomes a parameter to a phase-distorsed LFO (v2.0)
 * [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
 * [ ] support pitch modulation (v2.5)
 * [ ] more advanced phase distortion (multiple inflection points)
