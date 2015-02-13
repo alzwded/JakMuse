@@ -36,6 +36,9 @@ typedef struct {
         float depth;
         float freq_modulation_depth;
     } lfo;
+    struct {
+        unsigned Ns;
+    } glide;
 } generator_public_state_t;
 
 typedef float (*generator_fn)(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsigned short fill);
@@ -48,6 +51,13 @@ typedef struct {
         unsigned last_freq;
         float rc_reg;
         unsigned adsr_counter;
+        unsigned gl_NsPerPeriod;
+        unsigned gl_idx;
+        unsigned gl_nextStartAt;
+        unsigned gl_counter;
+        unsigned gl_passed;
+        //
+        std::vector<unsigned> Ts;
     } priv;
     generator_public_state_t pub;
 } generator_state_t;
@@ -75,6 +85,18 @@ typedef class Generator
                 0.f,
                 // adsr counter
                 0,
+                // gl_NsPerPeriod,
+                0,
+                // gl_idx,
+                0,
+                // gl_nextStartAt,
+                0,
+                // gl_counter
+                0,
+                // gl_passed
+                0,
+                // auto
+                //.......
             },
             // public
             {
@@ -100,6 +122,10 @@ typedef class Generator
                     0, 0,
                     // depth
                     0.f,
+                },
+                // glide
+                {
+                    0,
                 },
             },
         };
@@ -127,12 +153,30 @@ public:
     void SetLfoFrequency(unsigned freq) { state_.pub.lfo.freq = freq; }
     void SetLfoPhase(unsigned phase) { state_.pub.lfo.phase = phase; }
     void SetLfoDepth(float depth) { state_.pub.lfo.depth = depth; }
+    void SetGlideDuration(unsigned numSamples) { state_.pub.glide.Ns = numSamples; }
 
     void NewNote(unsigned frequency)
     {
         state_.priv.last_freq = state_.pub.def.freq;
         state_.pub.def.freq = frequency;
         if(frequency) state_.priv.adsr_counter = 0;
+
+        if(state_.pub.glide.Ns
+                && state_.priv.last_freq
+                && state_.pub.def.freq)
+        {
+            unsigned T0 = JAKMUSE_SAMPLES_PER_SECOND / state_.priv.last_freq;
+            unsigned TN = JAKMUSE_SAMPLES_PER_SECOND / state_.pub.def.freq;
+            state_.priv.gl_NsPerPeriod = state_.pub.glide.Ns / abs(T0 - TN + 1);
+            state_.priv.gl_idx = 0;
+            state_.priv.gl_counter = state_.priv.gl_NsPerPeriod;
+            state_.priv.Ts.clear();
+            state_.priv.gl_passed = 0;
+            for(unsigned T = T0; T != TN; T += (T0 < TN) - (T0 >= TN)) {
+                state_.priv.Ts.push_back(T);
+            }
+            state_.priv.Ts.push_back(TN);
+        }
     }
 
     float operator()();

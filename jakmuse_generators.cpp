@@ -75,6 +75,29 @@ float Generator::operator()()
     unsigned Ns = (freq) ? JAKMUSE_SAMPLES_PER_SECOND / freq : 0;
     unsigned last_Ns = (last_freq) ? JAKMUSE_SAMPLES_PER_SECOND / last_freq : 0;
 
+    if(state_.pub.glide.Ns
+            && freq
+            && last_freq)
+    {
+        if(state_.priv.gl_counter < state_.priv.gl_NsPerPeriod) {
+            state_.priv.gl_counter++;
+        } else if(state_.priv.k % state_.priv.Ts[state_.priv.gl_idx] == 0) {
+            state_.priv.gl_counter = state_.priv.gl_nextStartAt;
+            state_.priv.gl_nextStartAt = 1;
+            state_.priv.k = 0;
+            state_.priv.gl_idx = 
+                (1.03f * state_.priv.gl_passed + state_.priv.gl_NsPerPeriod)
+                / state_.priv.gl_NsPerPeriod
+                - 1;
+            state_.priv.gl_idx = std::min(state_.priv.gl_idx, state_.priv.Ts.size() - 1);
+        } else {
+            state_.priv.gl_nextStartAt++;
+        }
+        state_.priv.gl_counter++;
+        state_.priv.gl_passed++;
+        Ns = state_.priv.Ts[state_.priv.gl_idx];
+    }
+
     // compute base sample
     float base = fn_(state_.priv.k, state_.priv.noise_regs, Ns, state_.pub.def.fill);
     float prev = fn_(state_.priv.k, state_.priv.noise_regs, last_Ns, state_.pub.def.fill);

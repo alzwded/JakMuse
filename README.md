@@ -55,6 +55,7 @@ Example:
   LFODepth 60
   LFOFreq 20
   LFOPhase 20
+  Glide 800
 # end parameters
 }
 # notes
@@ -75,7 +76,19 @@ The same channel can apear in multiple samples; for each subsequent appearance, 
 
 The format of a note is `<length><base_note><accidental?><octave>`. The length is a multiple of `NPS`.
 
+The `Glide` parameter controls how much time is taken to shift from the previous note to the next.
+
 `# Comments` are ignored.
+
+### Units
+
+`NPS` is expressed in notes per second.
+
+`Fill`, `S`, `LFODepth` and `MaxVol` are expressed in values from 0 to 255.
+
+`Filter` and `LFOFreq` are frequencies.
+
+`A`, `D`, `R`, `LFOPhase` and `Glide` are durations, and a value of 4096 equals one second.
 
 Examples
 --------
@@ -176,7 +189,7 @@ TODO:
 * [x] output wav file (v2.0)
 * [x] improve parser to modify some parameters in an optional way (e.g. I set ADSR once for channel 0 but I still want to modify its fill factor without having to re-specify ADSR) because the amount of parameters is becoming unweildly (8 + 5 more on the way) (v2.0)
 * [x] multi-threaded compilation of channels (v2.0)
-* [ ] support ~~bends/glides~~ glide parameter (v2.0)
+* [x] support ~~bends/glides~~ glide parameter (v2.0)
 * [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
 * [ ] support pitch modulation (v2.5)
 * [ ] build interactive library (e.g. to be used in games; this needs a major rewrite (again)) (v3.0)

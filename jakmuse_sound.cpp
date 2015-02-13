@@ -123,6 +123,7 @@ static void process_params(
     process_params_CONDITION_duration(R, EnvelopeR);
     process_params_CONDITION(LFOFreq, LfoFrequency);
     process_params_CONDITION_duration(LFOPhase, LfoPhase);
+    process_params_CONDITION_duration(Glide, GlideDuration);
     process_params_CONDITION_float(LFODepth, LfoDepth);
 #undef process_params_CONDITION
 #undef process_params_CONDITION_float
