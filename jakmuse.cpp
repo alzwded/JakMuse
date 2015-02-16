@@ -41,12 +41,35 @@ for(size_t i = 0; i < JAKMUSE_NUMCHANNELS; ++i) {\
     printf("\n"); \
 }
 
+static void usage(char const* argv0)
+{
+    printf("Usage: %s [-w file.wav|-v|-h]\n", argv0);
+    exit(255);
+}
+
 int main(int argc, char* argv[])
 {
-    if(argc > 1 && strcmp(argv[1], "-v") == 0) {
-        printf("JakMuse v%s, Copyright %s, Vlad Mesco\n", VERSION, COPYRIGHT_YEAR);
-        printf("  available under the terms of the Simplified BSD License\n");
-        exit(255);
+    bool wav(false);
+
+    if(argc > 1 && (argv[1][0] == '-' || argv[1][0] == '/') && argv[1][1]) {
+        switch(argv[1][1]) {
+        case 'v':
+            printf("JakMuse v%s, Copyright %s, Vlad Mesco\n", VERSION, COPYRIGHT_YEAR);
+            printf("  available under the terms of the Simplified BSD License\n");
+            exit(255);
+            break;
+        case 'h':
+        case '?':
+            usage(argv[0]);
+            break;
+        case 'w':
+            wav = true;
+            break;
+        default:
+            usage(argv[0]);
+        }
+    } else if(argc > 1) {
+        usage(argv[0]);
     }
 
     extern void init_generators();
@@ -69,7 +92,7 @@ int main(int argc, char* argv[])
             });
 
     std::string filename("jakmuse.wav");
-    if(argc > 1 && strcmp(argv[1], "-w") == 0) {
+    if(wav) {
         if(argc > 2) {
             filename.assign(argv[2]);
         }
