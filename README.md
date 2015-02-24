@@ -203,6 +203,7 @@ TODO:
 * [x] implement simple phase distortion (1 inflection point) + LFOPhase becomes a parameter to a phase-distorsed LFO (v2.0)
 * [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
 * [ ] support pitch modulation (v2.5)
+* [ ] high-pass filter in addition to the low pass one; some means of configuring the filter
 * [ ] more advanced phase distortion (multiple inflection points)
 * [ ] build interactive library (e.g. to be used in games; this needs a major rewrite (again)) (v3.0)
   + [ ] continuous _music_ channels
