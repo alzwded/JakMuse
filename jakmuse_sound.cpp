@@ -103,6 +103,7 @@ static void process_params(
     // scale and lfo wave length are special...
     if((found = params.find("NPS")) != params.end()) {
         scale = found->second;
+        scale || (scale = 1);
     }
     if((found = params.find("Filter")) != params.end()) {
         float filter_RC = 1.f / (2.f * 3.14159f * found->second);
@@ -151,7 +152,7 @@ void compile()
             auto& params = seq.params;
             auto& notes = seq.notes;
 
-            unsigned scale(0);
+            unsigned scale(1);
             process_params(params, gen, scale);
 
             for(auto& note : notes) {
