@@ -60,9 +60,9 @@ Example:
   A 40                  # if one is not specified, its last
   D 47                  # specified value for this channel
   S 200                 # will be kept
-  R 10 
-  Filter 12000
-  LFODepth 60
+  R 10                  #
+  Filter 12000          # ...except for NPS which defaults to 1
+  LFODepth 60           # if not specified. For now...
   LFOFreq 20
   LFOPhase 20
   Glide 800
@@ -208,6 +208,10 @@ TODO:
 * [ ] build interactive library (e.g. to be used in games; this needs a major rewrite (again)) (v3.0)
   + [ ] continuous _music_ channels
   + [ ] one-off jingle/SFX channels as overrides
+
+FIXME:
+
+* [ ] NPS value is not kept across sequences
 
 Test files
 ==========
