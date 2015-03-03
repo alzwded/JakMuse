@@ -64,7 +64,7 @@ typedef struct {
         float rc_reg;
         unsigned adsr_counter;
         unsigned gl_NsPerPeriod;
-        unsigned gl_idx;
+        size_t gl_idx;
         unsigned gl_nextStartAt;
         unsigned gl_counter;
         unsigned gl_passed;

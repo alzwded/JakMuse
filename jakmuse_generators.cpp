@@ -13,9 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <cmath>
 #include "jakmuse_common.h"
 
-#ifdef _MSC_VER
-# include <algorithm>
-#endif
+#include <algorithm>
 
 // in semitones
 #define LFO_TUNING_MAX 1.f
