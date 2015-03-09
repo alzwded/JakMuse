@@ -183,7 +183,10 @@ Preliminary:
 * [x] investigate noise generators á là gameboy (preliminary)
 * [x] investigate better realtime playback strategy (preliminary)
 
-TODO:
+TODO
+----
+
+### v2.0 ###
 
 * [x] rewrite according to _studyV2_ (v2.0)
   + [x] get rid of monotonic clock and be realtime
@@ -201,15 +204,26 @@ TODO:
 * [x] multi-threaded compilation of channels (v2.0)
 * [x] support ~~bends/glides~~ glide parameter (v2.0)
 * [x] implement simple phase distortion (1 inflection point) + LFOPhase becomes a parameter to a phase-distorsed LFO (v2.0)
-* [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
-* [ ] support pitch modulation (v2.5)
+
+### v2.1 ###
+
+* [ ] stereo support
 * [ ] high-pass filter in addition to the low pass one; some means of configuring the filter
+
+### v2.2 ###
+
+* [ ] support pitch modulation (v2.5)
 * [ ] more advanced phase distortion (multiple inflection points)
+
+### backlog ###
+
+* [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
 * [ ] build interactive library (e.g. to be used in games; this needs a major rewrite (again)) (v3.0)
   + [ ] continuous _music_ channels
   + [ ] one-off jingle/SFX channels as overrides
 
-FIXME:
+FIXME
+-----
 
 * [ ] NPS value is not kept across sequences
 
