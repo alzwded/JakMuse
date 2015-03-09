@@ -68,6 +68,7 @@ typedef struct {
         unsigned gl_nextStartAt;
         unsigned gl_counter;
         unsigned gl_passed;
+        unsigned lfo_k;
         //
         std::vector<unsigned> Ts;
     } priv;
@@ -106,6 +107,8 @@ typedef class Generator
                 // gl_counter
                 0,
                 // gl_passed
+                0,
+                // lfo_k
                 0,
                 // auto
                 //.......

@@ -169,7 +169,7 @@ float Generator::operator()()
         ? JAKMUSE_SAMPLES_PER_SECOND / state_.pub.lfo.freq
         : 1
         ;
-    unsigned lfo_lk = state_.priv.k % lfo_Ns;
+    unsigned lfo_lk = state_.priv.lfo_k++ % lfo_Ns;
     unsigned lfo_zp = state_.pub.lfo.phase * lfo_Ns;
     float lfo_sample = cosf(3.14159f *
             ((lfo_lk < lfo_zp)

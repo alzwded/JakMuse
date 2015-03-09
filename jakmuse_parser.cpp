@@ -120,15 +120,15 @@ void parse()
         // read the '{'
         std::string scratch;
         TOKEN(scratch);
-        ENSURE(scratch.compare("{") == 0);
+        ENSURE(scratch.compare("/") == 0);
         std::map<std::string, unsigned> params;
 
         do {
             TOKEN(scratch);
-            if(scratch.compare("}") == 0) break;
+            if(scratch.compare("/") == 0) break;
             unsigned val;
             TOKEN(val);
-            ENSURE(token.compare("}") != 0);
+            ENSURE(token.compare("/") != 0);
             params.insert(std::make_pair(scratch, val));
         } while(1);
 
