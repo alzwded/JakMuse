@@ -139,6 +139,7 @@ static void process_params(
     process_params_CONDITION_duration(Glide, GlideDuration);
     process_params_CONDITION_float(LFODepth, LfoDepth);
 #undef process_params_CONDITION
+#undef process_params_CONDITION_duration
 #undef process_params_CONDITION_float
 }
 
