@@ -212,7 +212,7 @@ TODO
 
 ### v2.2 ###
 
-* [ ] support pitch modulation (v2.5)
+* [ ] support pitch modulation
 * [ ] more advanced phase distortion (multiple inflection points)
 
 ### backlog ###
