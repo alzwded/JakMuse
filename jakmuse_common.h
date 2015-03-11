@@ -37,6 +37,7 @@ typedef struct {
     struct {
         unsigned freq, fill;
         float alpha;
+        unsigned NPS;
     } def;
     struct {
         float maxvol;
@@ -121,6 +122,8 @@ typedef class Generator
                     0, 128,
                     // filter's alpha parameter
                     1.1f,
+                    // notes per second
+                    1,
                 },
                 // volume
                 {
@@ -159,6 +162,7 @@ public:
 #endif
 
 
+    void SetNPS(unsigned NPS) { (state_.pub.def.NPS = NPS) || (state_.pub.def.NPS = 1); }
     void SetFrequency(unsigned freq) { state_.pub.def.freq = freq; }
     void SetFill(unsigned fill) { state_.pub.def.fill = fill; }
     void SetFilterAlpha(float alpha) { state_.pub.def.alpha = alpha; }
@@ -172,7 +176,8 @@ public:
     void SetLfoDepth(float depth) { state_.pub.lfo.depth = depth; }
     void SetGlideDuration(unsigned numSamples) { state_.pub.glide.Ns = numSamples; }
 
-    void NewNote(unsigned frequency);
+    // returns the scale (i.e. notes per second)
+    unsigned NewNote(unsigned frequency);
 
     float operator()();
 } generator_t;

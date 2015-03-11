@@ -192,7 +192,7 @@ float Generator::operator()()
     return note;
 }
 
-void Generator::NewNote(unsigned frequency)
+unsigned Generator::NewNote(unsigned frequency)
 {
     state_.priv.last_freq = state_.pub.def.freq;
     state_.pub.def.freq = frequency;
@@ -216,4 +216,6 @@ void Generator::NewNote(unsigned frequency)
         }
         state_.priv.Ts.push_back(TN);
     }
+
+    return state_.pub.def.NPS;
 }

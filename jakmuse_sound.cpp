@@ -96,15 +96,14 @@ void mix()
 
 static void process_params(
         std::map<std::string, unsigned>& params,
-        generator_t& gen,
-        unsigned& scale)
+        generator_t& gen)
 {
     std::map<std::string, unsigned>::iterator found;
-    // scale and lfo wave length are special...
-    if((found = params.find("NPS")) != params.end()) {
-        scale = found->second;
-        scale || (scale = 1);
-    }
+    //// scale and lfo wave length are special...
+    //if((found = params.find("NPS")) != params.end()) {
+    //    scale = found->second;
+    //    scale || (scale = 1);
+    //}
     if((found = params.find("Filter")) != params.end()) {
         float filter_RC = 1.f / (2.f * 3.14159f * found->second);
         static float timestep = 1.f / JAKMUSE_SAMPLES_PER_SECOND;
@@ -128,6 +127,7 @@ static void process_params(
         gen.Set##VARNAME(found->second); \
     }
 
+    process_params_CONDITION(NPS, NPS);
     process_params_CONDITION_float(MaxVol, MaxVol);
     process_params_CONDITION(Fill, Fill);
     process_params_CONDITION_duration(A, EnvelopeA);
@@ -153,13 +153,12 @@ void compile()
             auto& params = seq.params;
             auto& notes = seq.notes;
 
-            unsigned scale(1);
-            process_params(params, gen, scale);
+            process_params(params, gen);
 
             for(auto& note : notes) {
+                unsigned scale = gen.NewNote(note.frequency);
                 unsigned numSamples =
                     JAKMUSE_SAMPLES_PER_SECOND / scale * note.length;
-                gen.NewNote(note.frequency);
 
                 for(size_t i = 0; i < numSamples; ++i) {
                     pwm_t sample = gen();

@@ -58,7 +58,7 @@ static void cancel(const char* assertion)
 {
     fprintf(stderr, "Syntax error near token %d \"%s\"\n", toknum, token.c_str());
     fprintf(stderr, "Failed assertion '%s'\n", assertion);
-    return abort();
+    return exit(2);
 }
 
 static bool isnote(char c)

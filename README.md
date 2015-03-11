@@ -28,7 +28,7 @@ input: | sequences ;
 sequences: sequence | sequences sequence ;
 
 sequence: CHANNEL
-        '{' param_list '}'
+        '/' param_list '/'
         notes
         ";" ;
 
@@ -42,7 +42,7 @@ note: NOTE | PAUSE ;
 
 NOTE: "\d+[A-G][#b]?\d+" /* <length><note_name><accidental><note_scale> */
 PAUSE: "\d+-" /* <length>- */ 
-CHANNEL: "0" | "1" | "2" | "3" | "4" ;
+CHANNEL: [0-6] ;
 INT: "[0-9]*" ;
 COMMENT: "#.*$" :
 ```
@@ -53,7 +53,7 @@ Example:
 # channel
 0
 # begin parameters
-{
+/
   NPS 3                 # all of these will have reasonable
   Fill 128              # default
   MaxVol 128            #
@@ -67,18 +67,20 @@ Example:
   LFOPhase 20
   Glide 800
 # end parameters
-}
+/
 # notes
 1C4 7D4 ;
 ```
 
-The `Fill` parameter specifies the fill parameter for the PWM wave.
+The `Fill` parameter specifies the fill parameter for the PWM wave. A fill of `128` means you have an actual square wave.
 
-The `NPS` (Notes per second) parameter specifies how many 1-length notes will be played per second.
+The `NPS` (Notes per second) parameter specifies how many 1-length notes will be played per second. *E.g.* a `1C4` at `NPS 3` will play a single `C4` for a 3rd of a second.
 
-The `MaxVol` controls the master volume of the channel. `A`, `D`, `S`, `R` configure the ADSR envelope.
+The `MaxVol` controls the master volume of the channel. `A`, `D`, `S`, `R` configure the ADSR envelope. A volume of `MaxVol 255` will result in the maximum amplitude supported by your sound card. If you're using multiple channels, you should scale down the `MaxVol` parameter to avoid distortion. The mixing algorithm tries to prevent clipping, but it still introduces distortion when mixing signals which are too loud. If you want to rely on this distortion, feel free to keep `MaxVol` at high values.
 
-`Filter` is the frequency of a low pass filter applied over the signal.
+The `S` parameter represents the percentage to which to stabilise the volume of the note after the decay phase. `255` means 100% of `MaxVol`, `128` means ~50%, etc.
+
+`Filter` is the frequency of a low pass filter applied over the signal. The maximum frequency is `65534` for arbitrary reasons. The actual frequency is `+1`d, again for arbitrary reasons. The filter is applied individually to each channel, and not to the mixed output.
 
 The `LFO*` parameters control the LFO-based amplitude modulation for each channel. The LFO is a sine.
 
@@ -90,13 +92,15 @@ The `Glide` parameter controls how much time is taken to shift from the previous
 
 `# Comments` are ignored.
 
+Notes range from `Cb0` all the way to `B#10`. You probably can't hear these extreme notes, so that means you pretty much have all notes in the diatonic scale available, tuned to `A=440Hz`.
+
 ### Units
 
 `NPS` is expressed in notes per second.
 
 `Fill`, `S`, `LFODepth` and `MaxVol` are expressed in values from 0 to 255.
 
-`Filter` and `LFOFreq` are frequencies.
+`Filter` and `LFOFreq` are frequencies, to which `1` is added, between 0 and 65534.
 
 `A`, `D`, `R`, `LFOPhase` and `Glide` are durations, and a value of 4096 equals one second.
 
@@ -177,16 +181,16 @@ You need libSDL.so version 1.2.x installed on your system.
 Roadmap
 =======
 
+
+## pre2.0 ##
+
 Preliminary:
 
 * [x] investigate better mixing technique (preliminary)
 * [x] investigate noise generators á là gameboy (preliminary)
 * [x] investigate better realtime playback strategy (preliminary)
 
-TODO
-----
-
-### v2.0 ###
+## v2.0 ##
 
 * [x] rewrite according to _studyV2_ (v2.0)
   + [x] get rid of monotonic clock and be realtime
@@ -205,40 +209,25 @@ TODO
 * [x] support ~~bends/glides~~ glide parameter (v2.0)
 * [x] implement simple phase distortion (1 inflection point) + LFOPhase becomes a parameter to a phase-distorsed LFO (v2.0)
 
-### v2.1 ###
+## v2.1 ##
 
 * [ ] stereo support
 * [ ] high-pass filter in addition to the low pass one; some means of configuring the filter
 
-### v2.2 ###
+## v2.2 ##
 
 * [ ] support pitch modulation
 * [ ] more advanced phase distortion (multiple inflection points)
 
-### backlog ###
+## backlog ##
 
 * [ ] output lillypad document instead of ~~channel dump~~ nothing (v2.5)
 * [ ] build interactive library (e.g. to be used in games; this needs a major rewrite (again)) (v3.0)
   + [ ] continuous _music_ channels
   + [ ] one-off jingle/SFX channels as overrides
+* [ ] load libSDL only when playing music interactively
 
 FIXME
 -----
 
 * [ ] NPS value is not kept across sequences
-
-Test files
-==========
-
-**NOTE**: the samples are not in a stable working order because the parser is going through a re-write.
-
-**Disclaimer**: I have used the word _test_ badly in the following table.
-
-| name                          | description                           |
-|-------------------------------|---------------------------------------|
-| `test`                        | this unceremoniously named files tests all 5 channels at once |
-| `testSolo`                    | tests the two triangle waves acting as either triangle waves or sawteeth |
-| `testSolo2`                   | tests a square and a triangle (in triangle or sawtooth mode) together |
-| `beat2`                       | a funky beat |
-| `testDrumBeat`                | test a drum beat with a square arpeggio |
-| `drumSolo`                    | same beat sans square voice |
