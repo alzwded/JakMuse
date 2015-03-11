@@ -123,8 +123,6 @@ float Generator::operator()()
     float base = fn_(state_.priv.k, state_.priv.noise_regs, Ns, state_.pub.def.fill);
     float prev = fn_(state_.priv.k, state_.priv.noise_regs, last_Ns, state_.pub.def.fill);
 
-    // TODO glide... maybe
-
     // apply volume
 #define ADSR_COUNTER (state_.priv.adsr_counter)
     if(ADSR_COUNTER < state_.pub.volume.A) {
@@ -161,10 +159,6 @@ float Generator::operator()()
 #undef ADSR_COUNTER
 
     // apply amplitude lfo
-    //float lfo_sample = cosf(state_.priv.k
-    //        * (float)state_.pub.lfo.freq / JAKMUSE_SAMPLES_PER_SECOND
-    //        * 2.f * 3.14159f
-    //        + (float)state_.pub.lfo.phase);
     unsigned lfo_Ns = (state_.pub.lfo.freq)
         ? JAKMUSE_SAMPLES_PER_SECOND / state_.pub.lfo.freq
         : 1

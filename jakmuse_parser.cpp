@@ -109,7 +109,7 @@ static unsigned short get_frequency(char name, signed scale, char accidental)
 void parse()
 {
     g_channel_sequences.resize(JAKMUSE_NUMCHANNELS);
-    // CHANNEL '{' param_list '}' note_list ';' ;
+    // CHANNEL '/' param_list '/' note_list ';' ;
     while(!std::cin.eof()) {
         // get channel
         unsigned channel(255);
@@ -117,7 +117,7 @@ void parse()
         if(!std::cin.good() || std::cin.eof()) break;
         ENSURE(channel < JAKMUSE_NUMCHANNELS);
 
-        // read the '{'
+        // read the first '/'
         std::string scratch;
         TOKEN(scratch);
         ENSURE(scratch.compare("/") == 0);
@@ -132,8 +132,7 @@ void parse()
             params.insert(std::make_pair(scratch, val));
         } while(1);
 
-        // configure the generator
-        //Generator& gen = g_generators[channel];
+        // build the generator's configuration
         sequence_t sequence = { params };
 
         // start reading notes
