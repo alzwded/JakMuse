@@ -99,11 +99,6 @@ static void process_params(
         generator_t& gen)
 {
     std::map<std::string, unsigned>::iterator found;
-    //// scale and lfo wave length are special...
-    //if((found = params.find("NPS")) != params.end()) {
-    //    scale = found->second;
-    //    scale || (scale = 1);
-    //}
     if((found = params.find("Filter")) != params.end()) {
         float filter_RC = 1.f / (2.f * 3.14159f * found->second);
         static float timestep = 1.f / JAKMUSE_SAMPLES_PER_SECOND;

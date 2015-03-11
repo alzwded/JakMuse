@@ -80,7 +80,7 @@ The `MaxVol` controls the master volume of the channel. `A`, `D`, `S`, `R` confi
 
 The `S` parameter represents the percentage to which to stabilise the volume of the note after the decay phase. `255` means 100% of `MaxVol`, `128` means ~50%, etc.
 
-`Filter` is the frequency of a low pass filter applied over the signal. The maximum frequency is `65534` for arbitrary reasons. The actual frequency is `+1`d, again for arbitrary reasons. The filter is applied individually to each channel, and not to the mixed output.
+`Filter` is the frequency of a low pass filter applied over the signal. The filter is applied individually to each channel, and not to the mixed output.
 
 The `LFO*` parameters control the LFO-based amplitude modulation for each channel. The LFO is a sine.
 
@@ -100,7 +100,7 @@ Notes range from `Cb0` all the way to `B#10`. You probably can't hear these extr
 
 `Fill`, `S`, `LFODepth` and `MaxVol` are expressed in values from 0 to 255.
 
-`Filter` and `LFOFreq` are frequencies, to which `1` is added, between 0 and 65534.
+`Filter` and `LFOFreq` are frequencies between 0 and 65535.
 
 `A`, `D`, `R`, `LFOPhase` and `Glide` are durations, and a value of 4096 equals one second.
 
