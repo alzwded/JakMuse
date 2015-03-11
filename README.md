@@ -230,4 +230,4 @@ Preliminary:
 FIXME
 -----
 
-* [ ] NPS value is not kept across sequences
+* [x] NPS value is not kept across sequences
