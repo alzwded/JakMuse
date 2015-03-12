@@ -213,6 +213,7 @@ Preliminary:
 
 * [ ] stereo support
 * [ ] high-pass filter in addition to the low pass one; some means of configuring the filter
+* [ ] wav output to stdout in order to respect the \*nix philosophy.
 
 ## v2.2 ##
 
