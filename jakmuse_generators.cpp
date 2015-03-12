@@ -80,7 +80,7 @@ static float _sine(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsi
        If the negative infinity problem pops up again I'll probably spend
        more time figuring out what the devil's happening.
     */
-    volatile float val_2 =
+    volatile float val_2 = 3.14159f *
         ((lk < zp)
         ? ((float)lk / zp)
         : ( (float)(lk - zp)
