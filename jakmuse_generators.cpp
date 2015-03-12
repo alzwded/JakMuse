@@ -54,7 +54,7 @@ static float _sine(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsi
     // for fill = 128
     float zeroPosition = (float)fill / 255.f;
     unsigned zp = Ns * zeroPosition;
-#if 1
+#ifndef _MSC_VER
     float val_1 = sinf(3.14159f * 
             ((lk < zp)
             ? ((float)lk / zp)            
