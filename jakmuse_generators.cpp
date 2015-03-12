@@ -54,12 +54,12 @@ static float _sine(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsi
     // for fill = 128
     float zeroPosition = (float)fill / 255.f;
     unsigned zp = Ns * zeroPosition;
-#ifndef _MSC_VER
+#if 1
     float val_1 = sinf(3.14159f * 
             ((lk < zp)
-            ? ((float)lk / zp)
+            ? ((float)lk / zp)            
             : ( (float)(lk - zp)
-                    / (Ns - zp)
+                    / (float)(Ns - zp)
                 + 1.f))
             );
 #else
@@ -86,12 +86,13 @@ static float _sine(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsi
         : ( (float)(lk - zp)
                 / (Ns - zp)
             + 1.f));
+    ;
     _clearfp();
     volatile float val_1 = sinf(val_2);
     _clearfp();
     val_1 = sinf(val_2);
-    _clearfp();
-    val_1 = sinf(val_2);
+    //_clearfp();
+    //val_1 = sinf(val_2);
 #endif
 
     return val_1;

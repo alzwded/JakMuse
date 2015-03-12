@@ -1,7 +1,7 @@
 CC = cl.exe
 VERSION = "\"2.0\""
 SDLROOT = SDL-1.2.15
-CFLAGS = /Ot /c /EHsc /I.. /I"$(SDLROOT)\include" /DVERSION=$(VERSION) /Zi /arch:SSE2 /openmp
+CFLAGS = /Ot /c /EHsc /I.. /I"$(SDLROOT)\include" /DVERSION=$(VERSION) /Zi /arch:SSE /openmp
 LD = link.exe
 PLA = x86
 LDOPTS = /OUT:jakmuse.exe /LIBPATH:"$(SDLROOT)\lib\$(PLA)" /DEBUG /PDB:jakmuse.pdb
