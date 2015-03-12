@@ -1,9 +1,0 @@
-0 { NPS 3 MaxVol 128 A 300 D 400 S 80 R 1000 Filter 18000 }     1A4 1- 1C4 2B4 1- ;
-0 { NPS 3 MaxVol 128 A 300 D 400 S 80 R 1000 Filter 800 }       1A4 1- 1C4 1B4 1- ;
-0 { NPS 3 MaxVol 128 A 300 D 400 S 80 R 1000 Filter 100 }       1A4 1- 1C4 1B4 1- ;
-0 { NPS 3 MaxVol 128 A 300 D 400 S 80 R 3000 Filter 18000 }     1A4 1- 1C4 1B4 1- ;
-0 { NPS 3 MaxVol 128 A 300 D 400 S 80 R 3000 Filter 800 }       1A4 1- 1C4 1B4 1- ;
-0 { NPS 3 MaxVol 128 A 300 D 400 S 80 R 3000 Filter 100 }       1A4 1- 1C4 1B4 1- ;
-0 { NPS 3 MaxVol 128 A 300 D 400 S 80 R 0 Filter 18000 }        1A4 1- 1C4 1B4 1- ;
-0 { NPS 3 MaxVol 128 A 300 D 400 S 80 R 0 Filter 800 }          1A4 1- 1C4 1B4 1- ;
-0 { NPS 3 MaxVol 128 A 300 D 400 S 80 R 0 Filter 100 }          1A4 1- 1C4 1B4 1- ;
