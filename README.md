@@ -66,6 +66,7 @@ Example:
   LFOFreq 20
   LFOPhase 20
   Glide 800
+  ResetADSR 1
 # end parameters
 /
 # notes
@@ -90,6 +91,8 @@ The format of a note is `<length><base_note><accidental?><octave>`. The length i
 
 The `Glide` parameter controls how much time is taken to shift from the previous note to the next.
 
+The `ResetADSR` parameter configures whether or not to start a new attack/decay phase for consecutive notes without a rest between them. With `ResetADSR 0`, of consecutive notes – i.e. `1A4 1B4` – only the first will have an attack/decay phase and only the last will have a release phase. With `ResetADSR 1` all notes will have ADS phases and only the last will have a release phase.
+
 `# Comments` are ignored.
 
 Notes range from `Cb0` all the way to `B#10`. You probably can't hear these extreme notes, so that means you pretty much have all notes in the diatonic scale available, tuned to `A=440Hz`.
@@ -103,6 +106,8 @@ Notes range from `Cb0` all the way to `B#10`. You probably can't hear these extr
 `Filter` and `LFOFreq` are frequencies between 0 and 65535.
 
 `A`, `D`, `R`, `LFOPhase` and `Glide` are durations, and a value of 4096 equals one second.
+
+`ResetADSR` can be 0 (disabled) or 1 (enabled).
 
 Examples
 --------
