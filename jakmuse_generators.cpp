@@ -15,6 +15,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include <algorithm>
 
+#ifdef _MSC_VER
+# include <float.h>
+#endif
+
 // in semitones
 #define LFO_TUNING_MAX 1.f
 
@@ -50,6 +54,7 @@ static float _sine(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsi
     // for fill = 128
     float zeroPosition = (float)fill / 255.f;
     unsigned zp = Ns * zeroPosition;
+#ifndef _MSC_VER
     float val_1 = sinf(3.14159f * 
             ((lk < zp)
             ? ((float)lk / zp)
@@ -57,6 +62,37 @@ static float _sine(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsi
                     / (Ns - zp)
                 + 1.f))
             );
+#else
+    /* All right, let me explain...
+
+       There's this really weird thing that's happening on a particular
+       intel machine on windows where both sin and sinf start going
+       haywire and returning negative infinity like crazy.
+
+       I couldn't figure out for the life of me what the problem is,
+       but calling it 2 times in a row with _clearfp in between seems
+       to sort-of end up producing, you know, normal results. At least
+       for my test.
+
+       Another thing, it only starts happening more-or-less at random
+       based on other things that happen beforehand. I don't know...
+
+       If the negative infinity problem pops up again I'll probably spend
+       more time figuring out what the devil's happening.
+    */
+    volatile float val_2 =
+        ((lk < zp)
+        ? ((float)lk / zp)
+        : ( (float)(lk - zp)
+                / (Ns - zp)
+            + 1.f));
+    _clearfp();
+    volatile float val_1 = sinf(val_2);
+    _clearfp();
+    val_1 = sinf(val_2);
+    _clearfp();
+    val_1 = sinf(val_2);
+#endif
 
     return val_1;
 }
