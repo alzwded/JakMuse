@@ -90,9 +90,7 @@ static float _sine(unsigned k, noise_reg_t noise_regs[], unsigned short Ns, unsi
     _clearfp();
     volatile float val_1 = sinf(val_2);
     _clearfp();
-    val_1 = sinf(val_2);
-    //_clearfp();
-    //val_1 = sinf(val_2);
+    (std::isnan(val_1) || std::isinf(val_1)) && (val_1 = sinf(val_2));
 #endif
 
     return val_1;
