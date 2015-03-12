@@ -43,6 +43,7 @@ typedef struct {
         float maxvol;
         float S;
         unsigned A, D, R;
+        unsigned reset;
     } volume;
     struct {
         unsigned freq;
@@ -133,6 +134,8 @@ typedef class Generator
                     1.f,
                     // attack, decay, release
                     0, 0, 0,
+                    // reset ADSR envelope on consecutive notes
+                    0,
                 },
                 // lfo
                 {
@@ -174,6 +177,7 @@ public:
     void SetLfoFrequency(unsigned freq) { state_.pub.lfo.freq = freq; }
     void SetLfoPhase(float phase) { state_.pub.lfo.phase = phase; }
     void SetLfoDepth(float depth) { state_.pub.lfo.depth = depth; }
+    void SetResetADSR(unsigned reset) { state_.pub.volume.reset = reset; }
     void SetGlideDuration(unsigned numSamples) { state_.pub.glide.Ns = numSamples; }
 
     // returns the scale (i.e. notes per second)

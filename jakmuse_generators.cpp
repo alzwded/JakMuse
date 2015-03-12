@@ -226,7 +226,10 @@ unsigned Generator::NewNote(unsigned frequency)
     state_.priv.last_freq = state_.pub.def.freq;
     state_.pub.def.freq = frequency;
     if(frequency) state_.priv.adsr_counter = 0;
-    if(state_.priv.last_freq) {
+    if(!state_.pub.volume.reset
+            && frequency
+            && state_.priv.last_freq)
+    {
         state_.priv.adsr_counter = 
             state_.pub.volume.A +
             state_.pub.volume.D

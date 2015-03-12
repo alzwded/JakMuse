@@ -133,6 +133,7 @@ static void process_params(
     process_params_CONDITION_float(LFOPhase, LfoPhase);
     process_params_CONDITION_duration(Glide, GlideDuration);
     process_params_CONDITION_float(LFODepth, LfoDepth);
+    process_params_CONDITION(ResetADSR, ResetADSR);
 #undef process_params_CONDITION
 #undef process_params_CONDITION_duration
 #undef process_params_CONDITION_float
