@@ -15,10 +15,17 @@ Signal Types
 
 All these support ADSR envelopes, glide and RC filtering.
 
+| channel                      | type                             | observations                             |
+|------------------------------|----------------------------------|------------------------------------------|
+| 0 & 1                        | pulse                            | |
+| 2 & 3                        | triangle                         | the peak can be moved with the Fill parameter |
+| 4                            | noise                            | C0 is pseudo-white noise, C8 is noise with a short period; the frequency can be lowered by increasing the Fill parameter from 1 to >1, or through filtering |
+| 5 & 6                        | sine                             | can be distorted with the Fill parameter |
+
 Input format
 ============
 
-Input is read from STDIN. This means you can either pipe/redirect the input from a file or write it yourself at the terminal.
+Input is read from STDIN. This means you can either pipe/redirect the input from a file or write it yourself at the terminal. For example, `jakmuse < mysong.txt` or `jakmuse -w song.wav < mysong.txt` or `type mysong.txt | jakmuse`.
 
 On POSIX systems, you can end STDIN on a terminal with ^D (Ctrl+D) on a blank line. On Windows you can end STDIN in cmd the CP/M way with ^Z<CR> (Ctrl-Z Enter) on a blank line.
 
@@ -54,15 +61,15 @@ Example:
 0
 # begin parameters
 /
-  NPS 3                 # all of these will have reasonable
-  Fill 128              # default
+  NPS 3                 # all of these have reasonable
+  Fill 128              # defaults
   MaxVol 128            #
   A 40                  # if one is not specified, its last
   D 47                  # specified value for this channel
   S 200                 # will be kept
-  R 10                  #
-  Filter 12000          # ...except for NPS which defaults to 1
-  LFODepth 60           # if not specified. For now...
+  R 10
+  Filter 12000
+  LFODepth 60
   LFOFreq 20
   LFOPhase 20
   Glide 800
@@ -73,13 +80,15 @@ Example:
 1C4 7D4 ;
 ```
 
-The `Fill` parameter specifies the fill parameter for the PWM wave. A fill of `128` means you have an actual square wave.
+The `Fill` parameter specifies the fill parameter for the PWM signal. A fill of `128` means you have an actual square wave.
 
 The `NPS` (Notes per second) parameter specifies how many 1-length notes will be played per second. *E.g.* a `1C4` at `NPS 3` will play a single `C4` for a 3rd of a second.
 
 The `MaxVol` controls the master volume of the channel. `A`, `D`, `S`, `R` configure the ADSR envelope. A volume of `MaxVol 255` will result in the maximum amplitude supported by your sound card. If you're using multiple channels, you should scale down the `MaxVol` parameter to avoid distortion. The mixing algorithm tries to prevent clipping, but it still introduces distortion when mixing signals which are too loud. If you want to rely on this distortion, feel free to keep `MaxVol` at high values.
 
 The `S` parameter represents the percentage to which to stabilise the volume of the note after the decay phase. `255` means 100% of `MaxVol`, `128` means ~50%, etc.
+
+The `ResetADSR` parameter configures whether or not to start a new attack/decay phase for consecutive notes without a rest between them. With `ResetADSR 0`, of consecutive notes – i.e. `1A4 1B4` – only the first will have an attack/decay phase and only the last will have a release phase. With `ResetADSR 1` all notes will have ADS phases and only the last will have a release phase.
 
 `Filter` is the frequency of a low pass filter applied over the signal. The filter is applied individually to each channel, and not to the mixed output.
 
@@ -90,8 +99,6 @@ The same channel can apear in multiple samples; for each subsequent appearance, 
 The format of a note is `<length><base_note><accidental?><octave>`. The length is a multiple of `NPS`.
 
 The `Glide` parameter controls how much time is taken to shift from the previous note to the next.
-
-The `ResetADSR` parameter configures whether or not to start a new attack/decay phase for consecutive notes without a rest between them. With `ResetADSR 0`, of consecutive notes – i.e. `1A4 1B4` – only the first will have an attack/decay phase and only the last will have a release phase. With `ResetADSR 1` all notes will have ADS phases and only the last will have a release phase.
 
 `# Comments` are ignored.
 
@@ -112,21 +119,7 @@ Notes range from `Cb0` all the way to `B#10`. You probably can't hear these extr
 Examples
 --------
 
-**NOTE**: the samples are not in a stable working order because the parser is going through a re-write.
-
-You can see examples/samples in the `./samples/` subdirectory.
-
-You can listen to them by running
-```sh
-./jakmuse <samples/beat2
-```
-
-or something like that.
-
-Or you can dump a .wav file:
-```batch
-jakmuse -w beat2.wav <samples/beat2
-```
+You can see examples/samples in [this](https://github.com/alzwded/JakMuseSongs) repo.
 
 You can exit via `CTRL-C` (a.k.a. SIGINT a.k.a. interrupt signal).
 
@@ -151,7 +144,7 @@ Audio
 
 The synthesised sound waves are loop'd into your soundcard so that you can hear them.
 
-Right now, SDL is used for actual audio output. The input is rendered up front and the resulting PCM data is streamed is done in realtime.
+Right now, SDL is used for actual audio output. The input is rendered up front and the resulting PCM data is then streamed.
 
 Technically speaking, SDL is not needed to write the wave file, only for playback.
 
